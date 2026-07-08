@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>تعلّم الصيني — من لغة الضاد إلى الماندرين</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#17140F;
+    --ink-2:#211C15;
+    --paper:#F1E8D6;
+    --paper-2:#E7DBC1;
+    --seal:#B23A2E;
+    --seal-dark:#8C2C22;
+    --gold:#C9A24B;
+    --jade:#3F6259;
+    --text-soft:#D8CDB6;
+    --text-dim:#8A8272;
+    --radius:2px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--paper);
+    font-family:'Tajawal', sans-serif;
+    line-height:1.7;
+    overflow-x:hidden;
+  }
+  h1,h2,h3, .display{
+    font-family:'Amiri', serif;
+    font-weight:700;
+  }
+  .zh{ font-family:'Noto Serif SC', serif; }
+  a{ color:inherit; text-decoration:none; }
+  img,svg{ display:block; max-width:100%; }
+  .wrap{
+    max-width:1120px;
+    margin:0 auto;
+    padding:0 28px;
+  }
+  ::selection{ background:var(--seal); color:var(--paper); }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+  }
+
+  /* ---------- NAV ---------- */
+  header.nav{
+    position:fixed; top:0; right:0; left:0; z-index:50;
+    background:rgba(23,20,15,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(201,162,75,0.18);
+  }
+  .nav-inner{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px;
+    max-width:1120px; margin:0 auto;
+  }
+  .brand{ display:flex; align-items:center; gap:10px; font-family:'Amiri',serif; font-size:1.3rem; font-weight:700; color:var(--paper);}
+  .brand .zh{ color:var(--seal); font-size:1.1rem; }
+  nav.links{ display:flex; gap:32px; font-size:0.95rem; color:var(--text-soft); }
+  nav.links a{ position:relative; transition:color .25s; }
+  nav.links a:hover{ color:var(--gold); }
+  .nav-cta{
+    background:var(--seal); color:var(--paper); padding:10px 22px;
+    border-radius:var(--radius); font-size:0.9rem; font-weight:700;
+    border:1px solid var(--seal);
+    transition: all .25s;
+  }
+  .nav-cta:hover{ background:transparent; color:var(--seal); }
+  .burger{ display:none; }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:170px 0 120px;
+    overflow:hidden;
+  }
+  .hero-watermark{
+    position:absolute; top:-40px; left:-40px;
+    font-size:26rem; font-family:'Noto Serif SC',serif;
+    color:rgba(201,162,75,0.05);
+    line-height:1; pointer-events:none; user-select:none;
+    z-index:0;
+  }
+  .hero-inner{
+    position:relative; z-index:2;
+    display:grid; grid-template-columns:1.15fr 0.85fr; gap:60px;
+    align-items:center;
+  }
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    color:var(--gold); font-size:0.85rem; letter-spacing:0.5px;
+    margin-bottom:22px;
+  }
+  .eyebrow::before{
+    content:''; width:26px; height:1px; background:var(--gold);
+  }
+  .hero h1{
+    font-size:3.4rem; line-height:1.28; color:var(--paper);
+    margin-bottom:24px;
+  }
+  .hero h1 em{
+    font-style:normal; color:var(--seal);
+  }
+  .hero p.lead{
+    font-size:1.15rem; color:var(--text-soft); max-width:560px; margin-bottom:36px;
+  }
+  .hero-actions{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+  .btn-primary{
+    background:var(--seal); color:var(--paper); padding:16px 34px;
+    border-radius:var(--radius); font-weight:700; font-size:1rem;
+    border:1px solid var(--seal); cursor:pointer;
+    transition:all .25s;
+    display:inline-block;
+  }
+  .btn-primary:hover{ background:var(--seal-dark); transform:translateY(-2px); }
+  .hero-count{ font-size:0.88rem; color:var(--text-dim); }
+  .hero-count strong{ color:var(--gold); }
+
+  /* seal stamp signature element */
+  .seal-stamp{
+    position:relative;
+    width:290px; height:290px;
+    justify-self:center;
+  }
+  .seal-box{
+    width:100%; height:100%;
+    border:6px solid var(--seal);
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    transform:rotate(-6deg) scale(0.4);
+    opacity:0;
+    background:
+      repeating-linear-gradient(45deg, rgba(178,58,46,0.05) 0 2px, transparent 2px 10px);
+    animation: stampIn 1.1s cubic-bezier(.2,.9,.3,1.2) .3s forwards;
+    box-shadow: inset 0 0 0 3px rgba(178,58,46,0.35);
+  }
+  @keyframes stampIn{
+    0%{ transform:rotate(-6deg) scale(0.4); opacity:0; }
+    60%{ transform:rotate(-4deg) scale(1.08); opacity:1; }
+    100%{ transform:rotate(-4deg) scale(1); opacity:1; }
+  }
+  .seal-box .seal-inner{
+    text-align:center; color:var(--seal);
+  }
+  .seal-box .seal-inner .zh-big{
+    font-size:3.6rem; font-family:'Noto Serif SC',serif; line-height:1;
+  }
+  .seal-box .seal-inner .ar-small{
+    margin-top:10px; font-family:'Amiri',serif; font-size:1rem; letter-spacing:1px;
+  }
+  @media (prefers-reduced-motion: reduce){
+    .seal-box{ animation:none; opacity:1; transform:rotate(-4deg) scale(1); }
+  }
+
+  section{ position:relative; padding:110px 0; }
+  .section-tag{
+    color:var(--gold); font-size:0.85rem; margin-bottom:14px; letter-spacing:0.4px;
+  }
+  h2.section-title{
+    font-size:2.3rem; color:var(--paper); margin-bottom:20px; max-width:680px;
+  }
+  p.section-sub{
+    color:var(--text-soft); max-width:620px; font-size:1.05rem;
+  }
+
+  /* reveal on scroll */
+  .reveal{
+    opacity:0; transform:translateY(24px);
+    transition:opacity .7s ease, transform .7s ease;
+  }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ---------- PROBLEM / COMPARISON ---------- */
+  .problem{ background:var(--ink-2); }
+  .compare{
+    display:grid; grid-template-columns:1fr 1fr; gap:0;
+    margin-top:56px;
+    border:1px solid rgba(201,162,75,0.2);
+    border-radius:4px; overflow:hidden;
+  }
+  .compare-col{ padding:38px 34px; }
+  .compare-col.bad{ background:rgba(178,58,46,0.06); border-left:1px solid rgba(201,162,75,0.2); }
+  .compare-col.good{ background:rgba(63,98,89,0.12); }
+  .compare-col h3{ font-family:'Tajawal',sans-serif; font-weight:700; font-size:1.05rem; margin-bottom:22px; }
+  .compare-col.bad h3{ color:var(--seal); }
+  .compare-col.good h3{ color:var(--jade); }
+  .compare-col ul{ list-style:none; display:flex; flex-direction:column; gap:16px; }
+  .compare-col li{ color:var(--text-soft); font-size:0.96rem; padding-right:26px; position:relative; }
+  .compare-col.bad li::before{ content:'✕'; position:absolute; right:0; color:var(--seal); font-weight:700; }
+  .compare-col.good li::before{ content:'✓'; position:absolute; right:0; color:var(--jade); font-weight:700; }
+
+  /* ---------- FEATURES ---------- */
+  .features-grid{
+    margin-top:60px;
+    display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
+    background:rgba(201,162,75,0.18);
+    border:1px solid rgba(201,162,75,0.18);
+  }
+  .feature-card{
+    background:var(--ink); padding:38px 32px;
+    transition:background .3s;
+  }
+  .feature-card:hover{ background:var(--ink-2); }
+  .feature-icon{
+    width:52px; height:52px; border:1px solid var(--gold); border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--gold); font-family:'Noto Serif SC',serif; font-size:1.5rem;
+    margin-bottom:22px;
+  }
+  .feature-card h3{ font-family:'Tajawal',sans-serif; font-weight:700; font-size:1.12rem; color:var(--paper); margin-bottom:12px; }
+  .feature-card p{ color:var(--text-soft); font-size:0.93rem; }
+
+  /* ---------- ROADMAP ---------- */
+  .roadmap{ background:var(--ink-2); }
+  .hsk-list{ margin-top:56px; display:flex; flex-direction:column; }
+  .hsk-row{
+    display:grid; grid-template-columns:90px 1fr 200px; align-items:center;
+    gap:24px; padding:26px 0; border-bottom:1px solid rgba(201,162,75,0.14);
+  }
+  .hsk-row:first-child{ border-top:1px solid rgba(201,162,75,0.14); }
+  .hsk-num{ font-family:'Noto Serif SC',serif; color:var(--seal); font-size:1.6rem; }
+  .hsk-title{ font-family:'Tajawal',sans-serif; font-weight:700; color:var(--paper); font-size:1.05rem; margin-bottom:6px; }
+  .hsk-desc{ color:var(--text-dim); font-size:0.9rem; }
+  .hsk-tag{ color:var(--gold); font-size:0.82rem; text-align:left; }
+
+  /* ---------- WAITLIST ---------- */
+  .waitlist{ }
+  .waitlist-box{
+    margin-top:50px;
+    background:linear-gradient(135deg, rgba(178,58,46,0.14), rgba(63,98,89,0.14));
+    border:1px solid rgba(201,162,75,0.25);
+    border-radius:6px;
+    padding:52px;
+    display:grid; grid-template-columns:1fr 1fr; gap:48px; align-items:center;
+  }
+  .waitlist-box h3{ font-size:1.7rem; color:var(--paper); margin-bottom:14px; }
+  .waitlist-box p{ color:var(--text-soft); font-size:0.98rem; }
+  .form-group{ margin-bottom:16px; }
+  form label{ display:block; font-size:0.85rem; color:var(--text-dim); margin-bottom:8px; }
+  form input, form select{
+    width:100%; background:var(--ink); border:1px solid rgba(201,162,75,0.3);
+    color:var(--paper); padding:14px 16px; border-radius:3px; font-family:'Tajawal',sans-serif; font-size:0.95rem;
+  }
+  form input:focus, form select:focus{ border-color:var(--gold); }
+  .submit-btn{
+    width:100%; background:var(--seal); color:var(--paper); border:none;
+    padding:15px; border-radius:3px; font-weight:700; font-size:1rem; cursor:pointer;
+    margin-top:8px; transition:background .25s;
+  }
+  .submit-btn:hover{ background:var(--seal-dark); }
+  .submit-btn:disabled{ opacity:0.6; cursor:wait; }
+  .form-msg{ margin-top:14px; font-size:0.9rem; min-height:20px; }
+  .form-msg.ok{ color:var(--jade); }
+  .form-msg.err{ color:var(--seal); }
+  .count-line{ margin-top:22px; font-size:0.85rem; color:var(--text-dim); border-top:1px solid rgba(201,162,75,0.15); padding-top:18px; }
+  .count-line strong{ color:var(--gold); }
+
+  /* ---------- FAQ ---------- */
+  .faq{ background:var(--ink-2); }
+  .faq-list{ margin-top:50px; max-width:760px; }
+  .faq-item{ border-bottom:1px solid rgba(201,162,75,0.15); padding:22px 0; }
+  .faq-q{
+    display:flex; justify-content:space-between; align-items:center;
+    cursor:pointer; font-family:'Tajawal',sans-serif; font-weight:700; color:var(--paper); font-size:1rem;
+  }
+  .faq-q .plus{ color:var(--gold); font-size:1.3rem; transition:transform .3s; }
+  .faq-item.open .plus{ transform:rotate(45deg); }
+  .faq-a{
+    max-height:0; overflow:hidden; transition:max-height .35s ease;
+    color:var(--text-soft); font-size:0.93rem;
+  }
+  .faq-item.open .faq-a{ max-height:200px; padding-top:14px; }
+
+  /* ---------- FOOTER ---------- */
+  footer{ padding:60px 0 40px; border-top:1px solid rgba(201,162,75,0.15); }
+  .footer-inner{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:20px; }
+  .footer-brand{ font-family:'Amiri',serif; font-size:1.1rem; color:var(--paper); }
+  .footer-note{ color:var(--text-dim); font-size:0.85rem; }
+
+  @media (max-width:900px){
+    nav.links{ display:none; }
+    .hero-inner{ grid-template-columns:1fr; }
+    .seal-stamp{ width:200px; height:200px; order:-1; }
+    .hero h1{ font-size:2.3rem; }
+    .hero-watermark{ font-size:14rem; }
+    .compare{ grid-template-columns:1fr; }
+    .compare-col.bad{ border-left:none; border-bottom:1px solid rgba(201,162,75,0.2); }
+    .features-grid{ grid-template-columns:1fr; }
+    .hsk-row{ grid-template-columns:60px 1fr; }
+    .hsk-tag{ display:none; }
+    .waitlist-box{ grid-template-columns:1fr; padding:32px; }
+    section{ padding:70px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">تعلّم <span class="zh">中文</span></div>
+    <nav class="links">
+      <a href="#features">المميزات</a>
+      <a href="#different">ليه مختلفين</a>
+      <a href="#roadmap">خارطة الطريق</a>
+      <a href="#faq">أسئلة شائعة</a>
+    </nav>
+    <a href="#waitlist" class="nav-cta">انضم لقائمة الانتظار</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-watermark zh">语</div>
+  <div class="wrap hero-inner">
+    <div>
+      <div class="eyebrow">تطبيق قيد التحضير — لمتحدثي العربية فقط</div>
+      <h1>لغة الضاد بتفتحلك باب <em>اللغة الصينية</em>، من غير ما تحتاج الإنجليزي أبدًا</h1>
+      <p class="lead">أول تطبيق بيعلّم الماندرين للناطقين بالعربية بشرح عربي 100%، من الأصوات لحد الخط، من غير ترجمة وسيطة ومن غير محتوى منسوخ من تطبيقات أجنبية.</p>
+      <div class="hero-actions">
+        <a href="#waitlist" class="btn-primary">سجّل مكانك الأول</a>
+        <span class="hero-count">مقاعد التجربة التجريبية محدودة</span>
+      </div>
+    </div>
+    <div class="seal-stamp">
+      <div class="seal-box">
+        <div class="seal-inner">
+          <div class="zh-big">文</div>
+          <div class="ar-small">تعلّم الصيني</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="problem" id="different">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-tag">ليه التطبيقات الموجودة مش كفاية</div>
+      <h2 class="section-title">كل تطبيقات تعلّم الصيني اتبنت لمتحدثي الإنجليزي، وإحنا مش كذلك</h2>
+      <p class="section-sub">لما بتتعلم صيني بتطبيق زي Duolingo أو HelloChinese، بتتعلمها من خلال الإنجليزي كلغة وسيطة. ده معناه إنك بتتعلم لغتين مش لغة واحدة، وبتفقد الفروق الدقيقة اللي مالهاش وجود في العربي أصلاً.</p>
+    </div>
+    <div class="compare reveal">
+      <div class="compare-col bad">
+        <h3>التطبيقات التقليدية</h3>
+        <ul>
+          <li>الشرح كله بالإنجليزي، والترجمة بتضيع في النص</li>
+          <li>المحتوى مترجم حرفيًا من مناهج أمريكية أو أوروبية</li>
+          <li>مفيش ربط بين أصوات الماندرين والأصوات اللي إنت متعود عليها في العربي</li>
+          <li>الخط الصيني بيتعلم كرسم، مش كفن له علاقة بتراثك</li>
+          <li>أمثلة ثقافية بعيدة تمامًا عن حياتك اليومية</li>
+        </ul>
+      </div>
+      <div class="compare-col good">
+        <h3>تعلّم الصيني</h3>
+        <ul>
+          <li>شرح كامل بالعربي المصري والفصحى، من غير وسيط</li>
+          <li>محتوى مبني من الصفر لمتحدث العربي تحديدًا</li>
+          <li>خريطة صوتية بتربط حروف البينيين بأقرب صوت عربي تعرفه</li>
+          <li>قسم "جسر الخطين" بيقارن جماليات الخط العربي والصيني</li>
+          <li>أمثلة وحوارات من سياقات عربية حقيقية: السفر، التجارة، الدراسة</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-tag">المميزات</div>
+      <h2 class="section-title">مش مجرد ترجمة تطبيق تاني — تجربة مبنية من الصفر</h2>
+    </div>
+    <div class="features-grid reveal">
+      <div class="feature-card">
+        <div class="feature-icon zh">声</div>
+        <h3>خريطة النطق الصوتية</h3>
+        <p>كل صوت في الماندرين بنوريك أقرب حرف أو مقطع عربي ليه، وبنوضحلك الفرق بالتفصيل بدل ما تحاول تخمّن النطق من رموز اللاتيني.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon zh">字</div>
+        <h3>جسر الخطين</h3>
+        <p>قسم مخصص بيقارن بين فن الخط العربي والخط الصيني: خطوات الكتابة، الجمال البصري، والمعنى الثقافي وراء كل حرف.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon zh">路</div>
+        <h3>مسار HSK رسمي</h3>
+        <p>خطة دروس متدرجة من HSK1 لحد HSK6، بتحضرك فعليًا للاختبار الدولي، مش بس محادثات عشوائية.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon zh">话</div>
+        <h3>حوارات من واقعك</h3>
+        <p>مواقف حقيقية لعربي بيسافر أو بيشتغل مع صينيين: في المطار، في التجارة، في الجامعة، مش حوارات مترجمة من كتاب أمريكي.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon zh">忆</div>
+        <h3>تكرار متباعد ذكي</h3>
+        <p>نظام مراجعة بيحسب أنسب وقت تراجع فيه كل كلمة عشان تدخل الذاكرة طويلة المدى، مش تتنسى بعد الدرس بيوم.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon zh">桥</div>
+        <h3>صفر إنجليزي</h3>
+        <p>من أول درس لحد آخر مستوى، الشرح والتمارين والاختبارات كلها بالعربي. مفيش لغة تالتة بتقف في النص.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="roadmap" id="roadmap">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-tag">خارطة الطريق</div>
+      <h2 class="section-title">من أول حرف لحد الطلاقة، بمعايير HSK الدولية</h2>
+      <p class="section-sub">كل مستوى بيبني على اللي قبله، وبيوصلك لمستوى معترف بيه دوليًا في اختبار HSK.</p>
+    </div>
+    <div class="hsk-list reveal">
+      <div class="hsk-row">
+        <div class="hsk-num">01</div>
+        <div><div class="hsk-title">أساسيات النطق والتحيات</div><div class="hsk-desc">150 كلمة أساسية، نظام البينيين، والنغمات الأربع بشرح مرتبط بالعربي</div></div>
+        <div class="hsk-tag">HSK 1</div>
+      </div>
+      <div class="hsk-row">
+        <div class="hsk-num">02</div>
+        <div><div class="hsk-title">جمل يومية بسيطة</div><div class="hsk-desc">300 كلمة، تكوين الجمل، والتعبير عن الاحتياجات اليومية</div></div>
+        <div class="hsk-tag">HSK 2</div>
+      </div>
+      <div class="hsk-row">
+        <div class="hsk-num">03</div>
+        <div><div class="hsk-title">محادثة مستقلة</div><div class="hsk-desc">600 كلمة، القدرة على التواصل في مواقف الحياة والعمل والدراسة</div></div>
+        <div class="hsk-tag">HSK 3</div>
+      </div>
+      <div class="hsk-row">
+        <div class="hsk-num">04</div>
+        <div><div class="hsk-title">نقاش وتعبير عن الرأي</div><div class="hsk-desc">1200 كلمة، مناقشة مواضيع أوسع بطلاقة نسبية</div></div>
+        <div class="hsk-tag">HSK 4</div>
+      </div>
+      <div class="hsk-row">
+        <div class="hsk-num">05</div>
+        <div><div class="hsk-title">قراءة الصحف والمقالات</div><div class="hsk-desc">2500 كلمة، فهم نصوص متخصصة ومحاضرات كاملة</div></div>
+        <div class="hsk-tag">HSK 5</div>
+      </div>
+      <div class="hsk-row">
+        <div class="hsk-num">06</div>
+        <div><div class="hsk-title">طلاقة شبه كاملة</div><div class="hsk-desc">5000+ كلمة، التعبير بدقة عن أفكار معقدة كتابةً وشفهيًا</div></div>
+        <div class="hsk-tag">HSK 6</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="waitlist" id="waitlist">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-tag">قائمة الانتظار</div>
+      <h2 class="section-title">كن أول من يجرب التطبيق</h2>
+    </div>
+    <div class="waitlist-box reveal">
+      <div>
+        <h3>ليه تنضم دلوقتي؟</h3>
+        <p>التطبيق لسه في مرحلة التطوير. اللي بينضم لقائمة الانتظار هياخد دعوة أولوية للنسخة التجريبية، وهيقدر يأثر في المحتوى والمميزات قبل الإطلاق الرسمي.</p>
+        <div class="count-line" id="countLine">جاري تحميل عدد المسجلين...</div>
+      </div>
+      <div>
+        <form id="waitlistForm">
+          <div class="form-group">
+            <label for="emailInput">البريد الإلكتروني</label>
+            <input type="email" id="emailInput" placeholder="example@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="reasonInput">ليه بتتعلم صيني؟ (اختياري)</label>
+            <select id="reasonInput">
+              <option value="">اختر سبب</option>
+              <option value="تجارة">تجارة واستيراد</option>
+              <option value="دراسة">دراسة أو منحة</option>
+              <option value="سفر">سفر وسياحة</option>
+              <option value="ثقافة">شغف باللغة والثقافة</option>
+              <option value="عمل">فرصة عمل</option>
+            </select>
+          </div>
+          <button type="submit" class="submit-btn" id="submitBtn">انضم لقائمة الانتظار</button>
+          <div class="form-msg" id="formMsg"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq" id="faq">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="section-tag">أسئلة شائعة</div>
+      <h2 class="section-title">قبل ما تنضم</h2>
+    </div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <div class="faq-q"><span>إمتى التطبيق هيطلع؟</span><span class="plus">+</span></div>
+        <div class="faq-a">التطبيق قيد التطوير حاليًا. المسجلين في قائمة الانتظار هياخدوا دعوة للنسخة التجريبية أول ما تكون جاهزة.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>هل التطبيق هيبقى مجاني؟</span><span class="plus">+</span></div>
+        <div class="faq-a">هيكون فيه محتوى مجاني يغطي المستويات الأولى، مع خطة مدفوعة اختيارية للمسارات المتقدمة ومسار HSK الكامل.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>محتاج أعرف إنجليزي عشان أستخدم التطبيق؟</span><span class="plus">+</span></div>
+        <div class="faq-a">أبدًا. كل حاجة في التطبيق بالعربي: الشرح، الأمثلة، التمارين، وحتى رسائل الأخطاء.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q"><span>هل هيشتغل على أندرويد وآيفون؟</span><span class="plus">+</span></div>
+        <div class="faq-a">النسخة الأولى هتكون على أندرويد، ومتاح خطة لنسخة آيفون حسب الطلب في قائمة الانتظار.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-inner">
+    <div class="footer-brand">تعلّم <span class="zh" style="color:var(--seal)">中文</span></div>
+    <div class="footer-note">صُنع بشغف من مصر • gogo163.github.io/taallam-sini</div>
+  </div>
+</footer>
+
+<script>
+  // ---- scroll reveal ----
+  const revealEls = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, { threshold:0.15 });
+  revealEls.forEach(el=>io.observe(el));
+
+  // ---- FAQ accordion ----
+  document.querySelectorAll('.faq-item').forEach(item=>{
+    item.querySelector('.faq-q').addEventListener('click', ()=>{
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(o=>o.classList.remove('open'));
+      if(!wasOpen) item.classList.add('open');
+    });
+  });
+
+  // ---- waitlist counter ----
+  const countLine = document.getElementById('countLine');
+  async function refreshCount(){
+    try{
+      const result = await window.storage.list('waitlist:', true);
+      const n = result && result.keys ? result.keys.length : 0;
+      countLine.innerHTML = n > 0
+        ? `انضم بالفعل <strong>${n}</strong> شخص لقائمة الانتظار`
+        : `كن أول شخص ينضم لقائمة الانتظار`;
+    }catch(err){
+      countLine.textContent = 'انضم دلوقتي وكن من أوائل المشتركين';
+    }
+  }
+  refreshCount();
+
+  // ---- waitlist form ----
+  const form = document.getElementById('waitlistForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const formMsg = document.getElementById('formMsg');
+
+  form.addEventListener('submit', async (e)=>{
+    e.preventDefault();
+    const email = document.getElementById('emailInput').value.trim();
+    const reason = document.getElementById('reasonInput').value;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if(!emailRegex.test(email)){
+      formMsg.textContent = 'من فضلك اكتب بريد إلكتروني صحيح';
+      formMsg.className = 'form-msg err';
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'جاري التسجيل...';
+    formMsg.textContent = '';
+
+    try{
+      const key = `waitlist:${Date.now()}-${Math.random().toString(36).slice(2,8)}`;
+      const result = await window.storage.set(key, JSON.stringify({
+        email, reason, ts: new Date().toISOString()
+      }), true);
+
+      if(result){
+        formMsg.textContent = 'تم تسجيلك بنجاح! هتوصلك دعوة أول ما التطبيق يكون جاهز.';
+        formMsg.className = 'form-msg ok';
+        form.reset();
+        refreshCount();
+      } else {
+        throw new Error('no result');
+      }
+    }catch(err){
+      formMsg.textContent = 'حصل خطأ أثناء التسجيل، حاول تاني بعد شوية.';
+      formMsg.className = 'form-msg err';
+    }finally{
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'انضم لقائمة الانتظار';
+    }
+  });
+</script>
+
+</body>
+</html>
