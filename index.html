@@ -37,7 +37,7 @@
   .hero p{ color:var(--text-soft); max-width:560px; margin:0 auto; }
 
   section{ padding:20px 0 70px; }
-  .modules{ display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:20px; }
+  .modules{ display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:20px; }
   .module-card{
     background:var(--ink-2); border:1px solid rgba(201,162,75,0.2); border-radius:6px;
     padding:34px 30px; transition:border-color .25s, transform .2s;
@@ -54,7 +54,7 @@
 
   footer{ padding:40px 0; text-align:center; color:var(--text-dim); font-size:0.85rem; }
 
-  @media (max-width:700px){
+  @media (max-width:900px){
     .modules{ grid-template-columns:1fr; }
     h1{ font-size:1.8rem; }
     .hero-watermark{ font-size:10rem; }
@@ -81,11 +81,17 @@
 <section>
   <div class="wrap">
     <div class="modules">
+      <a href="about-chinese.html" class="module-card">
+        <div class="module-icon zh">汉</div>
+        <h2>إيه هي اللغة الصينية؟</h2>
+        <p>دليل مبتدئين من الصفر: مين بيتكلم الصيني، إزاي نظام الكتابة شغال، والفرق بينه وبين العربي.</p>
+        <div class="module-tag">ابدأ من هنا لو أول مرة ←</div>
+      </a>
       <a href="pinyin-tones.html" class="module-card">
         <div class="module-icon zh">声</div>
         <h2>دليل البينيين والنغمات</h2>
         <p>الأساس اللي لازم تبدأ بيه: النغمات الأربع، حروف البداية والنهاية، وتمرين تفاعلي على السمع.</p>
-        <div class="module-tag">ابدأ من هنا ←</div>
+        <div class="module-tag">الخطوة الأولى للنطق ←</div>
       </a>
       <a href="hsk1.html" class="module-card">
         <div class="module-icon zh">路</div>
