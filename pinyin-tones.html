@@ -304,7 +304,7 @@
   }
 
   const toneMap = { 'mā':'妈', 'má':'麻', 'mǎ':'马', 'mà':'骂' };
-  const toneFile = { 'mā':'audio/tones/ma1.mp3', 'má':'audio/tones/ma2.mp3', 'mǎ':'audio/tones/ma3.mp3', 'mà':'audio/tones/ma4.mp3' };
+  const toneFile = { 'mā':'audio/tones/ma1.wav', 'má':'audio/tones/ma2.wav', 'mǎ':'audio/tones/ma3.wav', 'mà':'audio/tones/ma4.wav' };
   function playSyllable(pinyin){
     playWord(toneFile[pinyin], toneMap[pinyin] || pinyin);
   }
@@ -319,7 +319,7 @@
   let currentDrill = drillItems[0];
 
   function playDrill(){
-    playWord(`audio/tones/ma${currentDrill.tone}.mp3`, currentDrill.char);
+    playWord(`audio/tones/ma${currentDrill.tone}.wav`, currentDrill.char);
     document.getElementById('drillHint').textContent = 'اسمعت الصوت؟ اختار النغمة الصح 👇';
   }
 
