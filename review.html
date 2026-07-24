@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>المراجعة اليومية — تعلّم الصيني</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#FBF6EA; --ink-2:#FFFFFF; --paper:#241F16;
+    --seal:#B23A2E; --gold:#A8792B; --jade:#2F4F47; --text-soft:#5C5240; --text-dim:#7A7260;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--ink); color:var(--paper); font-family:'Tajawal',sans-serif;
+    max-width:480px; margin:0 auto; min-height:100vh; padding-bottom:40px;
+  }
+  a{ text-decoration:none; color:inherit; }
+  h1{ font-family:'Amiri',serif; }
+  .zh{ font-family:'Noto Serif SC',serif; }
+
+  header.top{
+    position:sticky; top:0; z-index:20; background:rgba(251,246,234,0.95); backdrop-filter:blur(8px);
+    padding:14px 18px; display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid rgba(150,110,40,0.15);
+  }
+  .back-link{ font-size:0.85rem; color:var(--text-soft); font-weight:700; }
+  .counter{ font-size:0.82rem; font-weight:800; color:var(--gold); }
+
+  .hero{ text-align:center; padding:26px 20px 10px; }
+  .eyebrow{ color:var(--gold); font-size:0.78rem; font-weight:800; margin-bottom:6px; }
+  h1{ font-size:1.4rem; }
+
+  /* ------------- الفلاش كارد ------------- */
+  .stage{ padding:20px; }
+  .flash-card{
+    background:var(--ink-2); border:1px solid rgba(150,110,40,0.2); border-radius:22px;
+    min-height:280px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:30px 24px; box-shadow:0 14px 34px rgba(36,31,22,0.1); cursor:pointer; text-align:center;
+  }
+  .fc-hanzi{ font-family:'Noto Serif SC',serif; font-size:3.4rem; margin-bottom:10px; }
+  .fc-pinyin{ color:var(--gold); font-size:1.1rem; font-weight:700; }
+  .fc-hint{ margin-top:26px; font-size:0.78rem; color:var(--text-dim); }
+
+  .fc-meaning{ display:none; margin-top:18px; }
+  .fc-meaning.show{ display:block; }
+  .fc-meaning .ar{ font-size:1.15rem; font-weight:800; margin-bottom:10px; }
+  .fc-meaning .example{ font-size:0.85rem; color:var(--text-soft); line-height:1.8; }
+  .fc-meaning .example .zh{ color:var(--jade); }
+
+  .answer-row{ display:flex; gap:12px; margin-top:20px; }
+  .answer-row.hidden{ display:none; }
+  .ans-btn{
+    flex:1; padding:15px; border-radius:14px; border:none; font-weight:800; font-size:0.9rem;
+    font-family:'Tajawal',sans-serif; cursor:pointer;
+  }
+  .ans-no{ background:rgba(178,58,46,0.12); color:var(--seal); border:1.5px solid rgba(178,58,46,0.3); }
+  .ans-yes{ background:rgba(47,79,71,0.12); color:var(--jade); border:1.5px solid rgba(47,79,71,0.3); }
+
+  /* ------------- شاشة عدم وجود مراجعات ------------- */
+  .empty-state{ text-align:center; padding:60px 30px; }
+  .empty-state .ic{ font-size:3rem; margin-bottom:16px; }
+  .empty-state h2{ font-family:'Amiri',serif; font-size:1.3rem; margin-bottom:10px; }
+  .empty-state p{ color:var(--text-soft); font-size:0.88rem; margin-bottom:20px; }
+  .empty-state a.cta{
+    display:inline-block; background:var(--seal); color:var(--ink); padding:13px 26px;
+    border-radius:999px; font-weight:800; font-size:0.88rem;
+  }
+
+  /* ------------- شاشة خلصت المراجعة ------------- */
+  .done-state{ text-align:center; padding:60px 30px; display:none; }
+  .done-state.show{ display:block; }
+  .done-state .ic{ font-size:3.2rem; margin-bottom:14px; }
+  .done-state h2{ font-family:'Amiri',serif; font-size:1.3rem; margin-bottom:8px; }
+  .done-state p{ color:var(--text-soft); font-size:0.88rem; margin-bottom:8px; }
+  .done-state .pts{ color:var(--gold); font-weight:800; font-size:1rem; margin-bottom:20px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="back-link" id="backLink" href="index.html">→ الرئيسية</a>
+  <div class="counter" id="counter"></div>
+</header>
+
+<div class="hero">
+  <div class="eyebrow" id="levelLabel">المراجعة اليومية</div>
+  <h1>راجعي كلماتك</h1>
+</div>
+
+<div class="stage" id="stage">
+  <!-- الفلاش كارد بيتحط هنا بـ JS -->
+</div>
+
+<div class="empty-state" id="emptyState">
+  <div class="ic">🎉</div>
+  <h2>مفيش كلمات محتاجة مراجعة دلوقتي</h2>
+  <p>كل كلماتك محفوظة كويس. ارجعي بكرة أو كمّلي درس جديد.</p>
+  <a class="cta" href="index.html">الرئيسية</a>
+</div>
+
+<div class="done-state" id="doneState">
+  <div class="ic">🏮</div>
+  <h2>خلصتي المراجعة النهارده!</h2>
+  <p id="doneCount"></p>
+  <div class="pts" id="donePts"></div>
+  <a class="cta" href="index.html">الرئيسية</a>
+</div>
+
+<script src="hsk1-data.js"></script>
+<script src="hsk2-data.js"></script>
+<script src="progress.js"></script>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const level = parseInt(params.get('level') || '2', 10);
+  const levelLabel = level === 2 ? 'HSK2' : 'HSK1';
+  const LESSONS = (level === 2 && typeof HSK2_LESSONS !== 'undefined') ? HSK2_LESSONS : (typeof HSK1_LESSONS !== 'undefined' ? HSK1_LESSONS : []);
+  const hubPage = level === 2 ? 'hsk2-path.html' : 'hsk1.html';
+
+  document.getElementById('backLink').href = hubPage;
+  document.getElementById('levelLabel').textContent = `المراجعة اليومية — ${levelLabel}`;
+
+  /* ---- تطبيع كلمة (يدعم صيغة HSK1 وHSK2) ---- */
+  function normalizeWord(w) {
+    if (w.hanzi !== undefined) {
+      return {
+        id: w.id, char: w.hanzi, pinyin: w.pinyin, ar: w.meaning_ar,
+        ex_zh: w.example ? w.example.hanzi : '',
+        ex_py: w.example ? w.example.pinyin : '',
+        ex_ar: w.example ? w.example.meaning_ar : ''
+      };
+    }
+    return { id: w.char, char: w.char, pinyin: w.pinyin, ar: w.ar, ex_zh: w.ex_zh, ex_py: w.ex_py, ex_ar: w.ex_ar };
+  }
+
+  /* ---- اجمعي كل كلمات الدروس المكتملة بس (مفيش داعي تراجعي حاجة لسه ما اتعلمتيهاش) ---- */
+  const state = TaallimProgress.loadProgress();
+  const completedIds = new Set(
+    state.completedLessons.filter(k => k.startsWith(levelLabel + '-')).map(k => parseInt(k.split('-')[1], 10))
+  );
+
+  let allWords = [];
+  LESSONS.forEach(lesson => {
+    if (completedIds.has(lesson.id)) {
+      lesson.words.forEach(w => allWords.push(normalizeWord(w)));
+    }
+  });
+
+  let queue = TaallimProgress.getDueWords(allWords);
+  // اخلطي الترتيب عشان ماتبقاش متوقعة
+  queue = queue.sort(() => Math.random() - 0.5);
+
+  const totalQueue = queue.length;
+  let reviewedCount = 0;
+
+  const stage = document.getElementById('stage');
+  const counter = document.getElementById('counter');
+
+  function updateCounter() {
+    counter.textContent = totalQueue > 0 ? `${reviewedCount}/${totalQueue}` : '';
+  }
+
+  function renderCard() {
+    if (queue.length === 0) {
+      stage.innerHTML = '';
+      if (reviewedCount > 0) {
+        const st = TaallimProgress.completeReviewSession();
+        document.getElementById('doneCount').textContent = `راجعتي ${reviewedCount} كلمة النهارده`;
+        document.getElementById('donePts').textContent = `+${TaallimProgress.POINTS_TABLE.dailyReviewCompleted} نقطة بونص المراجعة`;
+        document.getElementById('doneState').classList.add('show');
+      } else {
+        document.getElementById('emptyState').style.display = 'block';
+      }
+      counter.textContent = '';
+      return;
+    }
+
+    const word = queue[0];
+    stage.innerHTML = `
+      <div class="flash-card" id="flashCard">
+        <div class="fc-hanzi zh">${word.char}</div>
+        <div class="fc-pinyin">${word.pinyin}</div>
+        <div class="fc-hint" id="fcHint">دوسي عشان تشوفي المعنى</div>
+        <div class="fc-meaning" id="fcMeaning">
+          <div class="ar">${word.ar}</div>
+          <div class="example"><span class="zh">${word.ex_zh}</span> (${word.ex_py}) = ${word.ex_ar}</div>
+        </div>
+      </div>
+      <div class="answer-row hidden" id="answerRow">
+        <button class="ans-btn ans-no" id="btnNo">😅 مش فاكرة</button>
+        <button class="ans-btn ans-yes" id="btnYes">✅ فاكرة</button>
+      </div>
+    `;
+
+    const card = document.getElementById('flashCard');
+    card.addEventListener('click', () => {
+      document.getElementById('fcMeaning').classList.add('show');
+      document.getElementById('fcHint').style.display = 'none';
+      document.getElementById('answerRow').classList.remove('hidden');
+    }, { once: true });
+
+    document.getElementById('btnNo').onclick = (e) => { e.stopPropagation(); answer(word, false); };
+    document.getElementById('btnYes').onclick = (e) => { e.stopPropagation(); answer(word, true); };
+  }
+
+  function answer(word, correct) {
+    TaallimProgress.recordWordReview(word.id, correct);
+    reviewedCount++;
+    queue.shift();
+    updateCounter();
+    renderCard();
+  }
+
+  updateCounter();
+  renderCard();
+</script>
+
+</body>
+</html>

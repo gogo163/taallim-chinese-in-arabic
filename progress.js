@@ -30,7 +30,8 @@ function defaultState() {
     lastCompletedByLevel: {},      // { "HSK2": 3 } آخر درس اتخلص في كل مستوى
     streak: { current: 0, longest: 0, lastActiveDate: null },
     cultureStreak: { current: 0, longest: 0, lastReadDate: null, readCards: [] },
-    reviewQueue: {}                // { "v001": {...} }
+    reviewQueue: {},                // { "v001": {...} }
+    lastReviewSessionDate: null
   };
 }
 
@@ -203,6 +204,62 @@ function getNextLessonId(level, totalLessons) {
 }
 
 /* ------------------------------------------------------------
+   نظام المراجعة بالتكرار المتباعد (Spaced Repetition)
+   ------------------------------------------------------------ */
+const REVIEW_INTERVALS = ["1d", "3d", "7d", "14d", "30d"];
+const REVIEW_DAYS = { "1d": 1, "3d": 3, "7d": 7, "14d": 14, "30d": 30 };
+
+/* رجّع كل الكلمات اللي مستحقة مراجعة النهارده من قايمة كلمات معينة
+   allWords: [{id, hanzi, pinyin, meaning_ar, ...}, ...] */
+function getDueWords(allWords) {
+  const state = loadProgress();
+  const today = todayStr();
+  return allWords.filter(w => {
+    const rec = state.reviewQueue[w.id];
+    if (!rec) return true; // كلمة جديدة لسه ما اتراجعتش
+    return rec.nextReview <= today;
+  });
+}
+
+/* تسجيل نتيجة مراجعة كلمة واحدة (صح/غلط) وتحديد ميعاد المراجعة الجاية */
+function recordWordReview(wordId, wasCorrect) {
+  let state = loadProgress();
+  let rec = state.reviewQueue[wordId] || { interval: "1d", correctStreak: 0, timesWrong: 0 };
+
+  let idx = REVIEW_INTERVALS.indexOf(rec.interval || "1d");
+  if (wasCorrect) {
+    idx = Math.min(idx + 1, REVIEW_INTERVALS.length - 1);
+    rec.correctStreak = (rec.correctStreak || 0) + 1;
+  } else {
+    idx = 0;
+    rec.correctStreak = 0;
+    rec.timesWrong = (rec.timesWrong || 0) + 1;
+  }
+  rec.interval = REVIEW_INTERVALS[idx];
+  rec.lastReviewed = todayStr();
+  const next = new Date();
+  next.setDate(next.getDate() + REVIEW_DAYS[rec.interval]);
+  rec.nextReview = next.toISOString().split("T")[0];
+
+  state.reviewQueue[wordId] = rec;
+  saveProgress(state);
+  return state;
+}
+
+/* تُنادى لما المستخدم يخلص جلسة مراجعة كاملة (الطابور فاضي) - بونص مرة واحدة باليوم */
+function completeReviewSession() {
+  let state = loadProgress();
+  const today = todayStr();
+  if (state.lastReviewSessionDate === today) return state; // بونص اليوم اتاخد قبل كده
+
+  state.points += POINTS_TABLE.dailyReviewCompleted;
+  state.lastReviewSessionDate = today;
+  state = touchStreak(state);
+  saveProgress(state);
+  return state;
+}
+
+/* ------------------------------------------------------------
    تصدير global (مفيش modules هنا، كله global زي باقي الملفات)
    ------------------------------------------------------------ */
 window.TaallimProgress = {
@@ -212,5 +269,8 @@ window.TaallimProgress = {
   readCultureCard,
   getLessonStatus,
   getNextLessonId,
+  getDueWords,
+  recordWordReview,
+  completeReviewSession,
   POINTS_TABLE
 };
