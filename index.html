@@ -105,6 +105,31 @@
   .node-btn.pulse{ animation:pulse 2.2s infinite; }
   @keyframes pulse{ 0%{transform:scale(1);} 50%{transform:scale(1.06);} 100%{transform:scale(1);} }
 
+  /* ================= كارت كلمة اليوم ================= */
+  .word-of-day{
+    margin:16px 20px 0; background:linear-gradient(135deg, rgba(178,58,46,0.06), rgba(168,121,43,0.08));
+    border:1px solid rgba(178,58,46,0.2); border-radius:20px; padding:20px 18px;
+    box-shadow:0 10px 26px rgba(36,31,22,0.06);
+  }
+  .wod-badge{
+    display:inline-flex; align-items:center; gap:6px; background:var(--seal); color:var(--ink);
+    font-size:0.7rem; font-weight:800; padding:4px 12px; border-radius:999px; margin-bottom:14px;
+  }
+  .wod-body{ display:flex; align-items:center; gap:16px; }
+  .wod-hanzi{ font-family:'Noto Serif SC',serif; font-size:2.6rem; flex-shrink:0; }
+  .wod-info{ flex:1; }
+  .wod-pinyin{ font-size:1.05rem; font-weight:800; margin-bottom:4px; }
+  .wod-tone-tag{
+    display:inline-block; font-size:0.65rem; font-weight:800; padding:1px 8px; border-radius:999px;
+    margin-right:6px; color:#fff; vertical-align:middle;
+  }
+  .wod-meaning{ font-size:0.9rem; color:var(--paper); font-weight:700; }
+  .wod-example{
+    margin-top:12px; padding-top:12px; border-top:1px dashed rgba(150,110,40,0.25);
+    font-size:0.8rem; color:var(--text-soft); line-height:1.8;
+  }
+  .wod-example .zh{ color:var(--jade); }
+
   footer.note{ text-align:center; color:var(--text-dim); font-size:0.78rem; margin-top:30px; padding:0 30px; }
 
   /* ================= صفحة البروفايل (تظهر/تختفي) ================= */
@@ -152,6 +177,11 @@
   }
   .nav-tab .ic{ font-size:1.3rem; }
   .nav-tab.active{ color:var(--seal); }
+  .nav-tab .badge-dot{
+    position:absolute; top:2px; left:calc(50% - 18px); width:8px; height:8px; border-radius:50%;
+    background:var(--seal); display:none;
+  }
+  .nav-tab{ position:relative; }
 </style>
 </head>
 <body>
@@ -172,6 +202,8 @@
     <h1 id="greetTitle">يلا نكمل رحلتك في الصيني</h1>
     <p>اضغطي على أي دايرة تحت عشان تبدئي أو تكملي منها</p>
   </div>
+
+  <div class="word-of-day" id="wordOfDay"></div>
 
   <div class="continue-card" id="continueCard">
     <div class="n" id="continueIcon">▶</div>
@@ -269,11 +301,17 @@
   <button class="nav-tab active" id="tabHome">
     <span class="ic">🏠</span> الرئيسية
   </button>
+  <a class="nav-tab" id="tabReview" href="#">
+    <span class="badge-dot" id="reviewDot"></span>
+    <span class="ic">🔄</span> مراجعة
+  </a>
   <button class="nav-tab" id="tabProfile">
     <span class="ic">👤</span> حسابي
   </button>
 </nav>
 
+<script src="hsk1-data.js"></script>
+<script src="hsk2-data.js"></script>
 <script src="progress.js"></script>
 <script>
   const state = TaallimProgress.loadProgress();
@@ -290,10 +328,10 @@
   let continueHref, continueIcon, continueTitle, continueSub;
   if (hsk2Done > 0 && hsk2Done < 10) {
     continueHref = `lesson.html?level=2&l=${hsk2Done + 1}`;
-    continueIcon = '进'; continueTitle = `استمري من HSK2 — درس ${hsk2Done + 1}`; continueSub = 'مستوى HSK2';
+    continueIcon = '进'; continueTitle = `استمر من HSK2 — درس ${hsk2Done + 1}`; continueSub = 'مستوى HSK2';
   } else if (hsk1Done > 0 && hsk1Done < 10) {
     continueHref = `lesson.html?level=1&l=${hsk1Done + 1}`;
-    continueIcon = '路'; continueTitle = `استمري من HSK1 — درس ${hsk1Done + 1}`; continueSub = 'مستوى HSK1';
+    continueIcon = '路'; continueTitle = `استمر من HSK1 — درس ${hsk1Done + 1}`; continueSub = 'مستوى HSK1';
   } else if (hsk1Done >= 10 && hsk2Done === 0) {
     continueHref = `hsk2-path.html`;
     continueIcon = '进'; continueTitle = 'جاهزة لمستوى HSK2؟'; continueSub = 'خلصتي HSK1 كامل';
@@ -302,7 +340,7 @@
     continueIcon = '写'; continueTitle = 'خلصتي المستويين! 🎉'; continueSub = 'جربي تدريب الكتابة';
   } else {
     continueHref = `hsk1.html`;
-    continueIcon = '路'; continueTitle = 'ابدئي من هنا'; continueSub = 'مستوى HSK1';
+    continueIcon = '路'; continueTitle = 'ابدأ من هنا'; continueSub = 'مستوى HSK1';
   }
   document.getElementById('continueIcon').textContent = continueIcon;
   document.getElementById('continueTitle').textContent = continueTitle;
@@ -319,6 +357,92 @@
   document.getElementById('p-points').textContent = state.points;
   document.getElementById('p-lessons').textContent = state.completedLessons.length;
   document.getElementById('p-culture').textContent = state.cultureStreak.current;
+
+  /* ---- دالة تطبيع كلمة (تشتغل مع صيغة HSK1 وHSK2) ---- */
+  function normalizeWordForReview(w) {
+    if (w.hanzi !== undefined) {
+      return {
+        id: w.id, char: w.hanzi, pinyin: w.pinyin, ar: w.meaning_ar,
+        ex_zh: w.example ? w.example.hanzi : '', ex_py: w.example ? w.example.pinyin : '', ex_ar: w.example ? w.example.meaning_ar : ''
+      };
+    }
+    return { id: w.char, char: w.char, pinyin: w.pinyin, ar: w.ar, ex_zh: w.ex_zh, ex_py: w.ex_py, ex_ar: w.ex_ar };
+  }
+  function wordsForLevel(levelLabel, LESSONS) {
+    const completedIds = new Set(
+      state.completedLessons.filter(k => k.startsWith(levelLabel + '-')).map(k => parseInt(k.split('-')[1], 10))
+    );
+    let words = [];
+    LESSONS.forEach(lesson => {
+      if (completedIds.has(lesson.id)) lesson.words.forEach(w => words.push(normalizeWordForReview(w)));
+    });
+    return words;
+  }
+  function allWordsInLevel(LESSONS) {
+    let words = [];
+    LESSONS.forEach(lesson => lesson.words.forEach(w => words.push(normalizeWordForReview(w))));
+    return words;
+  }
+
+  const hsk1Words = (typeof HSK1_LESSONS !== 'undefined') ? wordsForLevel('HSK1', HSK1_LESSONS) : [];
+  const hsk2Words = (typeof HSK2_LESSONS !== 'undefined') ? wordsForLevel('HSK2', HSK2_LESSONS) : [];
+  const hsk2Due = TaallimProgress.getDueWords(hsk2Words).length;
+  const hsk1Due = TaallimProgress.getDueWords(hsk1Words).length;
+
+  /* ================= كلمة اليوم (من كل الكلمات، مش بس اللي خلصتيها) ================= */
+  function detectTone(pinyin) {
+    const tones = { 1: 'āēīōūǖ', 2: 'áéíóúǘ', 3: 'ǎěǐǒǔǚ', 4: 'àèìòùǜ' };
+    for (const ch of pinyin) {
+      for (const t in tones) { if (tones[t].includes(ch)) return parseInt(t, 10); }
+    }
+    return 5; // نغمة خفيفة / محايدة
+  }
+  const TONE_COLORS = { 1:'#B23A2E', 2:'#A8792B', 3:'#2F4F47', 4:'#6B4E9E', 5:'#8a8270' };
+  const TONE_NAMES = { 1:'النغمة الأولى', 2:'النغمة التانية', 3:'النغمة التالتة', 4:'النغمة الرابعة', 5:'نغمة خفيفة' };
+  function dayOfYear() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    return Math.floor((now - start) / 86400000);
+  }
+
+  const allHsk1 = (typeof HSK1_LESSONS !== 'undefined') ? allWordsInLevel(HSK1_LESSONS) : [];
+  const allHsk2 = (typeof HSK2_LESSONS !== 'undefined') ? allWordsInLevel(HSK2_LESSONS) : [];
+  const allWordsPool = [...allHsk1, ...allHsk2].filter(w => w.char && w.pinyin);
+
+  if (allWordsPool.length > 0) {
+    const idx = dayOfYear() % allWordsPool.length;
+    const wod = allWordsPool[idx];
+    const tone = detectTone(wod.pinyin);
+    document.getElementById('wordOfDay').innerHTML = `
+      <div class="wod-badge">☀️ كلمة اليوم</div>
+      <div class="wod-body">
+        <div class="wod-hanzi zh">${wod.char}</div>
+        <div class="wod-info">
+          <div class="wod-pinyin">
+            <span class="wod-tone-tag" style="background:${TONE_COLORS[tone]}">${TONE_NAMES[tone]}</span>
+            ${wod.pinyin}
+          </div>
+          <div class="wod-meaning">${wod.ar}</div>
+        </div>
+      </div>
+      ${wod.ex_zh ? `<div class="wod-example"><span class="zh">${wod.ex_zh}</span> (${wod.ex_py}) = ${wod.ex_ar}</div>` : ''}
+    `;
+  } else {
+    document.getElementById('wordOfDay').style.display = 'none';
+  }
+
+  /* ---- تحديد وجهة تاب المراجعة (أنسب مستوى فيه كلمات مستحقة) ---- */
+  const reviewTab = document.getElementById('tabReview');
+  if (hsk2Due > 0) {
+    reviewTab.href = 'review.html?level=2';
+  } else if (hsk1Due > 0) {
+    reviewTab.href = 'review.html?level=1';
+  } else {
+    reviewTab.href = hsk2Words.length > 0 ? 'review.html?level=2' : 'review.html?level=1';
+  }
+  if (hsk1Due + hsk2Due > 0) {
+    document.getElementById('reviewDot').style.display = 'block';
+  }
 
   /* ---- التبديل بين التابين ---- */
   const homeView = document.getElementById('homeView');

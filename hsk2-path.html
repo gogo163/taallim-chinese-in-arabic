@@ -157,7 +157,7 @@
 <div class="wrap continue-box" id="continueBox">
   <div class="n" id="continueIcon">▶</div>
   <div class="info">
-    <b id="continueTitle">استمري من هنا</b>
+    <b id="continueTitle">استمر من هنا</b>
     <span id="continueSub">جاري التحميل...</span>
   </div>
   <a class="continue-btn" id="continueBtn" href="#">استمر</a>
@@ -223,8 +223,8 @@ function renderContinueBox() {
 
   document.getElementById('continueIcon').textContent = lesson.icon;
   document.getElementById('continueTitle').textContent = doneCount === 0
-    ? 'ابدئي من هنا'
-    : `استمري من درس ${nextId}`;
+    ? 'ابدأ من هنا'
+    : `استمر من درس ${nextId}`;
   document.getElementById('continueSub').textContent = lesson.title;
   document.getElementById('continueBtn').href = `lesson.html?level=2&l=${nextId}`;
 }
