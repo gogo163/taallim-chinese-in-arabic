@@ -116,6 +116,11 @@
     font-size:0.7rem; font-weight:800; padding:4px 12px; border-radius:999px; margin-bottom:14px;
   }
   .wod-body{ display:flex; align-items:center; gap:16px; }
+  .wod-sound-btn{
+    width:42px; height:42px; border-radius:50%; border:1.5px solid rgba(178,58,46,0.3);
+    background:var(--ink-2); color:var(--seal); font-size:1rem; cursor:pointer; flex-shrink:0;
+  }
+  .wod-sound-btn:active{ background:var(--seal); color:var(--ink); }
   .wod-hanzi{ font-family:'Noto Serif SC',serif; font-size:2.6rem; flex-shrink:0; }
   .wod-info{ flex:1; }
   .wod-pinyin{ font-size:1.05rem; font-weight:800; margin-bottom:4px; }
@@ -378,9 +383,16 @@
     });
     return words;
   }
-  function allWordsInLevel(LESSONS) {
+  function allWordsInLevel(levelNum, LESSONS) {
     let words = [];
-    LESSONS.forEach(lesson => lesson.words.forEach(w => words.push(normalizeWordForReview(w))));
+    LESSONS.forEach(lesson => {
+      lesson.words.forEach((w, idx) => {
+        const norm = normalizeWordForReview(w);
+        const wordIndex = idx + 1;
+        norm.audio = w.audio ? w.audio : `audio/hsk${levelNum}/l${lesson.id}-${wordIndex}.wav`;
+        words.push(norm);
+      });
+    });
     return words;
   }
 
@@ -405,8 +417,8 @@
     return Math.floor((now - start) / 86400000);
   }
 
-  const allHsk1 = (typeof HSK1_LESSONS !== 'undefined') ? allWordsInLevel(HSK1_LESSONS) : [];
-  const allHsk2 = (typeof HSK2_LESSONS !== 'undefined') ? allWordsInLevel(HSK2_LESSONS) : [];
+  const allHsk1 = (typeof HSK1_LESSONS !== 'undefined') ? allWordsInLevel(1, HSK1_LESSONS) : [];
+  const allHsk2 = (typeof HSK2_LESSONS !== 'undefined') ? allWordsInLevel(2, HSK2_LESSONS) : [];
   const allWordsPool = [...allHsk1, ...allHsk2].filter(w => w.char && w.pinyin);
 
   if (allWordsPool.length > 0) {
@@ -424,9 +436,12 @@
           </div>
           <div class="wod-meaning">${wod.ar}</div>
         </div>
+        <button class="wod-sound-btn" id="wodSoundBtn" data-audio="${wod.audio}" data-char="${wod.char.split(' / ')[0]}">🔊</button>
       </div>
       ${wod.ex_zh ? `<div class="wod-example"><span class="zh">${wod.ex_zh}</span> (${wod.ex_py}) = ${wod.ex_ar}</div>` : ''}
     `;
+    const wodBtn = document.getElementById('wodSoundBtn');
+    wodBtn.addEventListener('click', () => playWord(wodBtn.dataset.audio, wodBtn.dataset.char));
   } else {
     document.getElementById('wordOfDay').style.display = 'none';
   }
@@ -462,7 +477,68 @@
     tabProfile.classList.add('active');
     tabHome.classList.remove('active');
   });
+
+  /* ---- play pre-recorded audio, fallback to device TTS if the file is missing ---- */
+  function playWord(audioPath, fallbackChar){
+    const audio = new Audio(audioPath);
+    let handled = false;
+    audio.addEventListener('error', () => {
+      if (!handled){ handled = true; speakChinese(fallbackChar); }
+    });
+    audio.play().catch(() => {
+      if (!handled){ handled = true; speakChinese(fallbackChar); }
+    });
+  }
+
+  /* ---- shared TTS with graceful voice detection ---- */
+  let zhVoice = null;
+  let voicesReady = false;
+
+  function loadZhVoice(){
+    if (!('speechSynthesis' in window)) return;
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length){
+      zhVoice = voices.find(v => v.lang === 'zh-CN')
+             || voices.find(v => v.lang && v.lang.startsWith('zh'))
+             || null;
+      voicesReady = true;
+    }
+  }
+  if ('speechSynthesis' in window){
+    loadZhVoice();
+    window.speechSynthesis.onvoiceschanged = loadZhVoice;
+  }
+
+  function speakChinese(text){
+    if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function'){
+      window.AppInventor.setWebViewString('SPEAK_ZH::' + text);
+      return;
+    }
+    if (!('speechSynthesis' in window)){
+      alert('المتصفح ده مش بيدعم النطق الصوتي (Web Speech API).');
+      return;
+    }
+    if (!voicesReady){
+      loadZhVoice();
+      if (!voicesReady){
+        setTimeout(() => speakChinese(text), 300);
+        return;
+      }
+    }
+    if (!zhVoice){
+      alert('مفيش صوت صيني (zh-CN) متثبت على الجهاز/المتصفح ده.');
+      return;
+    }
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.voice = zhVoice;
+    utter.lang = 'zh-CN';
+    utter.rate = 0.8;
+    utter.onerror = (e) => console.error('TTS error:', e.error);
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+  }
 </script>
+
 
 </body>
 </html>
