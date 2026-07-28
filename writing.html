@@ -6,6 +6,7 @@
 <title>تدريب الكتابة — تعلّم الصيني</title>
 <script src="hsk1-data.js"></script>
 <script src="hsk2-data.js"></script>
+<script src="hsk3-data.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.7/dist/hanzi-writer.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;800&family=Noto+Serif+SC:wght@400;700&display=swap');
@@ -107,14 +108,14 @@
 
 <header class="hero">
   <div class="eyebrow">书法 · تدريب الكتابة</div>
-  <h1>اكتبي الحرف بالترتيب الصحيح</h1>
-  <div class="sub">اختاري المستوى والدرس، وجربي أي كلمة اتعلمتيها</div>
+  <h1>اكتب الحرف بالترتيب الصحيح</h1>
+  <div class="sub">اختار المستوى والدرس، وجرب أي كلمة اتعلمتيها</div>
 </header>
 
 <div class="selectors" id="levelSelectors"></div>
 <div class="selectors" id="lessonSelectors"></div>
 <div class="char-grid" id="charGrid"></div>
-<div id="emptyMsg" class="empty-msg" style="display:none;">مفيش كلمات محمّلة. تأكدي إن ملفات hsk1-data.js و hsk2-data.js مرفوعة في نفس المجلد.</div>
+<div id="emptyMsg" class="empty-msg" style="display:none;">مفيش كلمات محمّلة. تأكد إن ملفات hsk1-data.js وhsk2-data.js وhsk3-data.js مرفوعة في نفس المجلد.</div>
 
 <div class="card" id="demoCard" style="display:none;">
   <div class="seal-mark">示</div>
@@ -132,7 +133,7 @@
   <div class="seal-mark">写</div>
   <div class="char-header">
     <div class="pinyin">دورك الآن</div>
-    <div class="meaning">ارسمي الحرف بإصبعك بنفس ترتيب الخطوط</div>
+    <div class="meaning">ارسم الحرف بإصبعك بنفس ترتيب الخطوط</div>
   </div>
   <div id="writer-quiz"></div>
   <div class="btn-row">
@@ -167,6 +168,12 @@ if (typeof HSK1_LESSONS !== 'undefined') {
 }
 if (typeof HSK2_LESSONS !== 'undefined') {
   LEVELS['HSK2'] = HSK2_LESSONS.map(l => ({
+    id: l.id, title: l.title,
+    words: l.words.map(w => extractChar(l, w)).filter(w => w.char)
+  }));
+}
+if (typeof HSK3_LESSONS !== 'undefined') {
+  LEVELS['HSK3'] = HSK3_LESSONS.map(l => ({
     id: l.id, title: l.title,
     words: l.words.map(w => extractChar(l, w)).filter(w => w.char)
   }));
@@ -289,10 +296,10 @@ document.getElementById('btn-animate').addEventListener('click', () => demoWrite
 
 document.getElementById('btn-quiz-start').addEventListener('click', () => {
   const statusEl = document.getElementById('quiz-status');
-  statusEl.textContent = 'ارسمي الآن...';
+  statusEl.textContent = 'ارسم الآن...';
   statusEl.className = 'status';
   quizWriter.quiz({
-    onMistake: (s) => { statusEl.textContent = `خطأ في الخط رقم ${s.strokeNum + 1}، حاولي تاني`; statusEl.className = 'status'; },
+    onMistake: (s) => { statusEl.textContent = `خطأ في الخط رقم ${s.strokeNum + 1}، حاول تاني`; statusEl.className = 'status'; },
     onCorrectStroke: (s) => { statusEl.textContent = `صح! باقي ${s.strokesRemaining} خط`; statusEl.className = 'status success'; },
     onComplete: (s) => { statusEl.textContent = `أحسنت! أكملتِ الحرف (${s.totalMistakes} أخطاء)`; statusEl.className = 'status success'; }
   });
