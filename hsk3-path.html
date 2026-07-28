@@ -184,7 +184,7 @@ function renderPath() {
     node.className = 'path-node';
 
     const isLocked = status === 'locked';
-    const href = isLocked ? '#' : `lesson.html?level=2&l=${lesson.id}`;
+    const href = isLocked ? '#' : `lesson.html?level=3&l=${lesson.id}`;
 
     const icon = status === 'completed' ? '✓' : lesson.icon;
 
@@ -214,10 +214,10 @@ function renderContinueBox() {
 
   if (doneCount >= TOTAL) {
     document.getElementById('continueIcon').textContent = '🎉';
-    document.getElementById('continueTitle').textContent = 'خلصتي كل الدروس!';
-    document.getElementById('continueSub').textContent = 'راجعي أي درس تحبي من المسار تحت';
+    document.getElementById('continueTitle').textContent = 'خلصت كل الدروس!';
+    document.getElementById('continueSub').textContent = 'راجع أي درس تحب من المسار تحت';
     document.getElementById('continueBtn').textContent = 'مراجعة';
-    document.getElementById('continueBtn').href = `lesson.html?level=2&l=1`;
+    document.getElementById('continueBtn').href = `lesson.html?level=3&l=1`;
     return;
   }
 
@@ -226,7 +226,7 @@ function renderContinueBox() {
     ? 'ابدأ من هنا'
     : `استمر من درس ${nextId}`;
   document.getElementById('continueSub').textContent = lesson.title;
-  document.getElementById('continueBtn').href = `lesson.html?level=2&l=${nextId}`;
+  document.getElementById('continueBtn').href = `lesson.html?level=3&l=${nextId}`;
 }
 
 renderStats();

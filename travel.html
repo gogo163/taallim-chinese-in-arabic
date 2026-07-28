@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>عبارات السفر — تعلّم الصيني</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#FBF6EA; --ink-2:#FFFFFF; --paper:#241F16;
+    --seal:#B23A2E; --gold:#A8792B; --jade:#2F4F47; --text-soft:#5C5240; --text-dim:#7A7260;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--ink); color:var(--paper); font-family:'Tajawal',sans-serif;
+    max-width:520px; margin:0 auto; min-height:100vh; padding-bottom:40px;
+  }
+  a{ text-decoration:none; color:inherit; }
+  h1{ font-family:'Amiri',serif; }
+  .zh{ font-family:'Noto Serif SC',serif; }
+
+  header.top{
+    position:sticky; top:0; z-index:20; background:rgba(251,246,234,0.95); backdrop-filter:blur(8px);
+    padding:14px 18px; display:flex; align-items:center; justify-content:space-between;
+    border-bottom:1px solid rgba(150,110,40,0.15);
+  }
+  .back-link{ font-size:0.85rem; color:var(--text-soft); font-weight:700; }
+
+  .hero{ text-align:center; padding:26px 20px 10px; }
+  .eyebrow{ color:var(--gold); font-size:0.78rem; font-weight:800; margin-bottom:6px; }
+  h1{ font-size:1.5rem; }
+  .hero p{ color:var(--text-soft); font-size:0.85rem; margin-top:8px; }
+
+  /* -------- تبويبات الفئات -------- */
+  .cat-tabs{
+    display:flex; gap:8px; overflow-x:auto; padding:16px 20px 6px; -webkit-overflow-scrolling:touch;
+  }
+  .cat-tabs::-webkit-scrollbar{ display:none; }
+  .cat-tab{
+    flex-shrink:0; display:flex; align-items:center; gap:6px; background:var(--ink-2);
+    border:1.5px solid rgba(150,110,40,0.2); border-radius:999px; padding:9px 16px;
+    font-size:0.82rem; font-weight:700; color:var(--text-soft); cursor:pointer; white-space:nowrap;
+  }
+  .cat-tab.active{ background:var(--seal); color:var(--ink); border-color:var(--seal); }
+
+  /* -------- قائمة العبارات -------- */
+  .phrase-list{ padding:16px 20px; display:flex; flex-direction:column; gap:10px; }
+  .phrase-card{
+    background:var(--ink-2); border:1px solid rgba(150,110,40,0.18); border-radius:16px;
+    padding:16px 18px; display:flex; align-items:center; gap:14px;
+    box-shadow:0 6px 16px rgba(36,31,22,0.05);
+  }
+  .phrase-sound{
+    width:44px; height:44px; border-radius:50%; border:1.5px solid rgba(178,58,46,0.3);
+    background:var(--ink); color:var(--seal); font-size:1.05rem; cursor:pointer; flex-shrink:0;
+  }
+  .phrase-sound:active{ background:var(--seal); color:var(--ink); }
+  .phrase-body{ flex:1; }
+  .phrase-hanzi{ font-family:'Noto Serif SC',serif; font-size:1.3rem; margin-bottom:2px; }
+  .phrase-pinyin{ color:var(--gold); font-size:0.82rem; font-weight:700; margin-bottom:4px; }
+  .phrase-meaning{ font-size:0.88rem; color:var(--paper); font-weight:600; }
+
+  footer.note{ text-align:center; color:var(--text-dim); font-size:0.78rem; margin-top:20px; padding:0 30px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <a class="back-link" href="index.html">→ الرئيسية</a>
+  <div style="font-weight:800; font-size:0.95rem;">✈️ عبارات السفر</div>
+</header>
+
+<div class="hero">
+  <div class="eyebrow">كتيّب سريع</div>
+  <h1>عبارات جاهزة للاستخدام فورًا</h1>
+  <p>مفيش كويز ولا حفظ هنا — بس افتحي القسم اللي محتاجاه وقت الحاجة</p>
+</div>
+
+<div class="cat-tabs" id="catTabs"></div>
+<div class="phrase-list" id="phraseList"></div>
+
+<footer class="note">تعلّم 中文 — كتيّب عبارات السفر</footer>
+
+<script src="travel-data.js"></script>
+<script>
+  let currentCat = TRAVEL_CATEGORIES[0].id;
+
+  function renderTabs() {
+    const tabs = document.getElementById('catTabs');
+    tabs.innerHTML = '';
+    TRAVEL_CATEGORIES.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.className = 'cat-tab' + (cat.id === currentCat ? ' active' : '');
+      btn.innerHTML = `${cat.icon} ${cat.title}`;
+      btn.onclick = () => { currentCat = cat.id; renderTabs(); renderPhrases(); };
+      tabs.appendChild(btn);
+    });
+  }
+
+  function renderPhrases() {
+    const list = document.getElementById('phraseList');
+    const cat = TRAVEL_CATEGORIES.find(c => c.id === currentCat);
+    list.innerHTML = '';
+    cat.phrases.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'phrase-card';
+      card.innerHTML = `
+        <button class="phrase-sound" data-audio="${p.audio}" data-char="${p.hanzi}">🔊</button>
+        <div class="phrase-body">
+          <div class="phrase-hanzi zh">${p.hanzi}</div>
+          <div class="phrase-pinyin">${p.pinyin}</div>
+          <div class="phrase-meaning">${p.meaning_ar}</div>
+        </div>
+      `;
+      list.appendChild(card);
+    });
+    list.querySelectorAll('.phrase-sound').forEach(btn => {
+      btn.addEventListener('click', () => playWord(btn.dataset.audio, btn.dataset.char));
+    });
+  }
+
+  /* ---- play pre-recorded audio, fallback to device TTS if the file is missing ---- */
+  function playWord(audioPath, fallbackChar){
+    const audio = new Audio(audioPath);
+    let handled = false;
+    audio.addEventListener('error', () => {
+      if (!handled){ handled = true; speakChinese(fallbackChar); }
+    });
+    audio.play().catch(() => {
+      if (!handled){ handled = true; speakChinese(fallbackChar); }
+    });
+  }
+
+  let zhVoice = null;
+  let voicesReady = false;
+  function loadZhVoice(){
+    if (!('speechSynthesis' in window)) return;
+    const voices = window.speechSynthesis.getVoices();
+    if (voices.length){
+      zhVoice = voices.find(v => v.lang === 'zh-CN')
+             || voices.find(v => v.lang && v.lang.startsWith('zh'))
+             || null;
+      voicesReady = true;
+    }
+  }
+  if ('speechSynthesis' in window){
+    loadZhVoice();
+    window.speechSynthesis.onvoiceschanged = loadZhVoice;
+  }
+  function speakChinese(text){
+    if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function'){
+      window.AppInventor.setWebViewString('SPEAK_ZH::' + text);
+      return;
+    }
+    if (!('speechSynthesis' in window)) return;
+    if (!voicesReady){ loadZhVoice(); if (!voicesReady){ setTimeout(() => speakChinese(text), 300); return; } }
+    if (!zhVoice) return;
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.voice = zhVoice; utter.lang = 'zh-CN'; utter.rate = 0.8;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+  }
+
+  renderTabs();
+  renderPhrases();
+</script>
+
+</body>
+</html>

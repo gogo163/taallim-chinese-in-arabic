@@ -45,7 +45,7 @@
   .greet h1{ font-size:1.5rem; }
   .greet p{ color:var(--text-soft); font-size:0.85rem; margin-top:6px; }
 
-  /* ================= شريط "استمري من هنا" ================= */
+  /* ================= شريط "استمر من هنا" ================= */
   .continue-card{
     margin:16px 20px; background:var(--ink-2); border:1px solid rgba(150,110,40,0.25);
     border-radius:20px; padding:16px 18px; display:flex; align-items:center; gap:14px;
@@ -81,6 +81,7 @@
   .path-node:nth-child(4){ justify-content:flex-start; padding-right:16%; }
   .path-node:nth-child(5){ justify-content:flex-end; padding-left:16%; }
   .path-node:nth-child(6){ justify-content:flex-start; padding-right:16%; }
+  .path-node:nth-child(7){ justify-content:flex-end; padding-left:16%; }
 
   .node-btn{
     width:82px; height:82px; border-radius:50%; display:flex; align-items:center; justify-content:center;
@@ -103,6 +104,7 @@
   .node-btn.hsk2{ background:var(--seal-dark); }
   .node-btn.hsk3{ background:#8B5E34; }
   .node-btn.writing{ background:#6B4E9E; }
+  .node-btn.travel{ background:#2F6F5E; }
 
   .node-btn.pulse{ animation:pulse 2.2s infinite; }
   @keyframes pulse{ 0%{transform:scale(1);} 50%{transform:scale(1.06);} 100%{transform:scale(1);} }
@@ -207,7 +209,7 @@
   <div class="greet">
     <div class="eyebrow">مرحبًا بيك</div>
     <h1 id="greetTitle">يلا نكمل رحلتك في الصيني</h1>
-    <p>اضغطي على أي دايرة تحت عشان تبدئي أو تكملي منها</p>
+    <p>اضغط على أي دايرة تحت عشان تبدأ أو تكمل منها</p>
   </div>
 
   <div class="word-of-day" id="wordOfDay"></div>
@@ -276,6 +278,13 @@
         </a>
       </div>
 
+      <div class="path-node">
+        <a href="travel.html" style="text-align:center;">
+          <div class="node-btn travel"><div class="node-icon">游</div></div>
+          <div class="node-label">عبارات السفر والسياحة</div>
+        </a>
+      </div>
+
     </div>
   </div>
 
@@ -309,7 +318,7 @@
   </div>
 
   <div class="culture-streak-box">
-    🏮 قريتي فكرة عن التفكير الصيني <b id="p-culture">0</b> يوم على التوالي
+    🏮 قريت فكرة عن التفكير الصيني <b id="p-culture">0</b> يوم على التوالي
   </div>
 </div>
 
@@ -357,13 +366,13 @@
     continueIcon = '路'; continueTitle = `استمر من HSK1 — درس ${hsk1Done + 1}`; continueSub = 'مستوى HSK1';
   } else if (hsk2Done >= 10 && hsk3Done === 0) {
     continueHref = `hsk3-path.html`;
-    continueIcon = '升'; continueTitle = 'جاهزة لمستوى HSK3؟'; continueSub = 'خلصتي HSK2 كامل';
+    continueIcon = '升'; continueTitle = 'جاهز لمستوى HSK3؟'; continueSub = 'خلصت HSK2 كامل';
   } else if (hsk1Done >= 10 && hsk2Done === 0) {
     continueHref = `hsk2-path.html`;
-    continueIcon = '进'; continueTitle = 'جاهزة لمستوى HSK2؟'; continueSub = 'خلصتي HSK1 كامل';
+    continueIcon = '进'; continueTitle = 'جاهز لمستوى HSK2؟'; continueSub = 'خلصت HSK1 كامل';
   } else if (hsk1Done >= 10 && hsk2Done >= 10 && hsk3Done >= 10) {
     continueHref = `writing.html`;
-    continueIcon = '写'; continueTitle = 'خلصتي كل المستويات! 🎉'; continueSub = 'جربي تدريب الكتابة';
+    continueIcon = '写'; continueTitle = 'خلصت كل المستويات! 🎉'; continueSub = 'جرب تدريب الكتابة';
   } else {
     continueHref = `hsk1.html`;
     continueIcon = '路'; continueTitle = 'ابدأ من هنا'; continueSub = 'مستوى HSK1';
@@ -424,7 +433,7 @@
   const hsk2Due = TaallimProgress.getDueWords(hsk2Words).length;
   const hsk1Due = TaallimProgress.getDueWords(hsk1Words).length;
 
-  /* ================= كلمة اليوم (من كل الكلمات، مش بس اللي خلصتيها) ================= */
+  /* ================= كلمة اليوم (من كل الكلمات، مش بس اللي خلصتها) ================= */
   function detectTone(pinyin) {
     const tones = { 1: 'āēīōūǖ', 2: 'áéíóúǘ', 3: 'ǎěǐǒǔǚ', 4: 'àèìòùǜ' };
     for (const ch of pinyin) {

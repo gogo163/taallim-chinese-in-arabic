@@ -86,7 +86,7 @@
 
 <div class="hero">
   <div class="eyebrow" id="levelLabel">المراجعة اليومية</div>
-  <h1>راجعي كلماتك</h1>
+  <h1>راجع كلماتك</h1>
 </div>
 
 <div class="stage" id="stage">
@@ -96,13 +96,13 @@
 <div class="empty-state" id="emptyState">
   <div class="ic">🎉</div>
   <h2>مفيش كلمات محتاجة مراجعة دلوقتي</h2>
-  <p>كل كلماتك محفوظة كويس. ارجعي بكرة أو كمّلي درس جديد.</p>
+  <p>كل كلماتك محفوظة كويس. ارجع بكرة أو كمّل درس جديد.</p>
   <a class="cta" href="index.html">الرئيسية</a>
 </div>
 
 <div class="done-state" id="doneState">
   <div class="ic">🏮</div>
-  <h2>خلصتي المراجعة النهارده!</h2>
+  <h2>خلصت المراجعة النهارده!</h2>
   <p id="doneCount"></p>
   <div class="pts" id="donePts"></div>
   <a class="cta" href="index.html">الرئيسية</a>
@@ -141,7 +141,7 @@
     return { id: w.char, char: w.char, pinyin: w.pinyin, ar: w.ar, ex_zh: w.ex_zh, ex_py: w.ex_py, ex_ar: w.ex_ar };
   }
 
-  /* ---- اجمعي كل كلمات الدروس المكتملة بس (مفيش داعي تراجعي حاجة لسه ما اتعلمتيهاش) ---- */
+  /* ---- اجمع كل كلمات الدروس المكتملة بس (مفيش داعي تراجع حاجة لسه ما اتعلمتيهاش) ---- */
   const state = TaallimProgress.loadProgress();
   const completedIds = new Set(
     state.completedLessons.filter(k => k.startsWith(levelLabel + '-')).map(k => parseInt(k.split('-')[1], 10))
@@ -155,7 +155,7 @@
   });
 
   let queue = TaallimProgress.getDueWords(allWords);
-  // اخلطي الترتيب عشان ماتبقاش متوقعة
+  // اخلط الترتيب عشان ماتبقاش متوقعة
   queue = queue.sort(() => Math.random() - 0.5);
 
   const totalQueue = queue.length;
@@ -173,7 +173,7 @@
       stage.innerHTML = '';
       if (reviewedCount > 0) {
         const st = TaallimProgress.completeReviewSession();
-        document.getElementById('doneCount').textContent = `راجعتي ${reviewedCount} كلمة النهارده`;
+        document.getElementById('doneCount').textContent = `راجعت ${reviewedCount} كلمة النهارده`;
         document.getElementById('donePts').textContent = `+${TaallimProgress.POINTS_TABLE.dailyReviewCompleted} نقطة بونص المراجعة`;
         document.getElementById('doneState').classList.add('show');
       } else {
@@ -188,7 +188,7 @@
       <div class="flash-card" id="flashCard">
         <div class="fc-hanzi zh">${word.char}</div>
         <div class="fc-pinyin">${word.pinyin}</div>
-        <div class="fc-hint" id="fcHint">دوسي عشان تشوفي المعنى</div>
+        <div class="fc-hint" id="fcHint">دوس عشان تشوف المعنى</div>
         <div class="fc-meaning" id="fcMeaning">
           <div class="ar">${word.ar}</div>
           <div class="example"><span class="zh">${word.ex_zh}</span> (${word.ex_py}) = ${word.ex_ar}</div>
