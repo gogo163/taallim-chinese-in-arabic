@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>مستوى HSK2 — مسار الدروس</title>
+<title>مستوى HSK3 — مسار الدروس</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Tajawal:wght@300;400;500;700;900&family=Noto+Serif+SC:wght@500;700&display=swap" rel="stylesheet">
 <style>
@@ -149,7 +149,7 @@
 <section class="hero">
   <div class="wrap">
     <div class="eyebrow">المستوى الثاني</div>
-    <h1>مستوى HSK2</h1>
+    <h1>مستوى HSK3</h1>
     <p>10 دروس، قواعد وكلمات جديدة، وفكرة عن التفكير الصيني في آخر كل درس.</p>
   </div>
 </section>
@@ -165,19 +165,19 @@
 
 <div class="wrap path" id="pathContainer"></div>
 
-<footer>تعلّم 中文 — مستوى HSK2</footer>
+<footer>تعلّم 中文 — مستوى HSK3</footer>
 
-<script src="hsk2-data.js"></script>
+<script src="hsk3-data.js"></script>
 <script src="progress.js"></script>
 <script>
-const LEVEL = "HSK2";
-const TOTAL = HSK2_LESSONS.length;
+const LEVEL = "HSK3";
+const TOTAL = HSK3_LESSONS.length;
 
 function renderPath() {
   const container = document.getElementById('pathContainer');
   container.innerHTML = '';
 
-  HSK2_LESSONS.forEach(lesson => {
+  HSK3_LESSONS.forEach(lesson => {
     const status = TaallimProgress.getLessonStatus(LEVEL, lesson.id);
 
     const node = document.createElement('div');
@@ -208,14 +208,14 @@ function renderStats() {
 
 function renderContinueBox() {
   const nextId = TaallimProgress.getNextLessonId(LEVEL, TOTAL);
-  const lesson = HSK2_LESSONS.find(l => l.id === nextId);
+  const lesson = HSK3_LESSONS.find(l => l.id === nextId);
   const state = TaallimProgress.loadProgress();
   const doneCount = (state.lastCompletedByLevel[LEVEL] || 0);
 
   if (doneCount >= TOTAL) {
     document.getElementById('continueIcon').textContent = '🎉';
-    document.getElementById('continueTitle').textContent = 'خلصت كل الدروس!';
-    document.getElementById('continueSub').textContent = 'راجع أي درس تحب من المسار تحت';
+    document.getElementById('continueTitle').textContent = 'خلصتي كل الدروس!';
+    document.getElementById('continueSub').textContent = 'راجعي أي درس تحبي من المسار تحت';
     document.getElementById('continueBtn').textContent = 'مراجعة';
     document.getElementById('continueBtn').href = `lesson.html?level=2&l=1`;
     return;

@@ -80,6 +80,7 @@
   .path-node:nth-child(3){ justify-content:flex-end; padding-left:16%; }
   .path-node:nth-child(4){ justify-content:flex-start; padding-right:16%; }
   .path-node:nth-child(5){ justify-content:flex-end; padding-left:16%; }
+  .path-node:nth-child(6){ justify-content:flex-start; padding-right:16%; }
 
   .node-btn{
     width:82px; height:82px; border-radius:50%; display:flex; align-items:center; justify-content:center;
@@ -100,6 +101,7 @@
   .node-btn.pinyin{ background:var(--jade); }
   .node-btn.hsk1{ background:var(--seal); }
   .node-btn.hsk2{ background:var(--seal-dark); }
+  .node-btn.hsk3{ background:#8B5E34; }
   .node-btn.writing{ background:#6B4E9E; }
 
   .node-btn.pulse{ animation:pulse 2.2s infinite; }
@@ -258,6 +260,16 @@
       </div>
 
       <div class="path-node">
+        <a href="hsk3-path.html" style="text-align:center;">
+          <div class="node-btn hsk3">
+            <div class="node-icon">升</div>
+            <div class="node-badge" id="hsk3Badge">0/10</div>
+          </div>
+          <div class="node-label">مستوى HSK3</div>
+        </a>
+      </div>
+
+      <div class="path-node">
         <a href="writing.html" style="text-align:center;">
           <div class="node-btn writing"><div class="node-icon">写</div></div>
           <div class="node-label">تدريب الكتابة</div>
@@ -317,6 +329,7 @@
 
 <script src="hsk1-data.js"></script>
 <script src="hsk2-data.js"></script>
+<script src="hsk3-data.js"></script>
 <script src="progress.js"></script>
 <script>
   const state = TaallimProgress.loadProgress();
@@ -326,23 +339,31 @@
 
   const hsk1Done = state.lastCompletedByLevel['HSK1'] || 0;
   const hsk2Done = state.lastCompletedByLevel['HSK2'] || 0;
+  const hsk3Done = state.lastCompletedByLevel['HSK3'] || 0;
   document.getElementById('hsk1Badge').textContent = `${hsk1Done}/10`;
   document.getElementById('hsk2Badge').textContent = `${hsk2Done}/10`;
+  document.getElementById('hsk3Badge').textContent = `${hsk3Done}/10`;
 
   /* ---- تحديد أنسب نقطة استمرار ---- */
   let continueHref, continueIcon, continueTitle, continueSub;
-  if (hsk2Done > 0 && hsk2Done < 10) {
+  if (hsk3Done > 0 && hsk3Done < 10) {
+    continueHref = `lesson.html?level=3&l=${hsk3Done + 1}`;
+    continueIcon = '升'; continueTitle = `استمر من HSK3 — درس ${hsk3Done + 1}`; continueSub = 'مستوى HSK3';
+  } else if (hsk2Done > 0 && hsk2Done < 10) {
     continueHref = `lesson.html?level=2&l=${hsk2Done + 1}`;
     continueIcon = '进'; continueTitle = `استمر من HSK2 — درس ${hsk2Done + 1}`; continueSub = 'مستوى HSK2';
   } else if (hsk1Done > 0 && hsk1Done < 10) {
     continueHref = `lesson.html?level=1&l=${hsk1Done + 1}`;
     continueIcon = '路'; continueTitle = `استمر من HSK1 — درس ${hsk1Done + 1}`; continueSub = 'مستوى HSK1';
+  } else if (hsk2Done >= 10 && hsk3Done === 0) {
+    continueHref = `hsk3-path.html`;
+    continueIcon = '升'; continueTitle = 'جاهزة لمستوى HSK3؟'; continueSub = 'خلصتي HSK2 كامل';
   } else if (hsk1Done >= 10 && hsk2Done === 0) {
     continueHref = `hsk2-path.html`;
     continueIcon = '进'; continueTitle = 'جاهزة لمستوى HSK2؟'; continueSub = 'خلصتي HSK1 كامل';
-  } else if (hsk1Done >= 10 && hsk2Done >= 10) {
+  } else if (hsk1Done >= 10 && hsk2Done >= 10 && hsk3Done >= 10) {
     continueHref = `writing.html`;
-    continueIcon = '写'; continueTitle = 'خلصتي المستويين! 🎉'; continueSub = 'جربي تدريب الكتابة';
+    continueIcon = '写'; continueTitle = 'خلصتي كل المستويات! 🎉'; continueSub = 'جربي تدريب الكتابة';
   } else {
     continueHref = `hsk1.html`;
     continueIcon = '路'; continueTitle = 'ابدأ من هنا'; continueSub = 'مستوى HSK1';
@@ -352,7 +373,7 @@
   document.getElementById('continueSub').textContent = continueSub;
   document.getElementById('continueBtn').href = continueHref;
 
-  if (state.streak.current === 0 && hsk1Done === 0 && hsk2Done === 0) {
+  if (state.streak.current === 0 && hsk1Done === 0 && hsk2Done === 0 && hsk3Done === 0) {
     document.getElementById('greetTitle').textContent = 'ابدأ رحلتك في تعلّم الصيني';
   }
 
@@ -398,6 +419,8 @@
 
   const hsk1Words = (typeof HSK1_LESSONS !== 'undefined') ? wordsForLevel('HSK1', HSK1_LESSONS) : [];
   const hsk2Words = (typeof HSK2_LESSONS !== 'undefined') ? wordsForLevel('HSK2', HSK2_LESSONS) : [];
+  const hsk3Words = (typeof HSK3_LESSONS !== 'undefined') ? wordsForLevel('HSK3', HSK3_LESSONS) : [];
+  const hsk3Due = TaallimProgress.getDueWords(hsk3Words).length;
   const hsk2Due = TaallimProgress.getDueWords(hsk2Words).length;
   const hsk1Due = TaallimProgress.getDueWords(hsk1Words).length;
 
@@ -419,7 +442,8 @@
 
   const allHsk1 = (typeof HSK1_LESSONS !== 'undefined') ? allWordsInLevel(1, HSK1_LESSONS) : [];
   const allHsk2 = (typeof HSK2_LESSONS !== 'undefined') ? allWordsInLevel(2, HSK2_LESSONS) : [];
-  const allWordsPool = [...allHsk1, ...allHsk2].filter(w => w.char && w.pinyin);
+  const allHsk3 = (typeof HSK3_LESSONS !== 'undefined') ? allWordsInLevel(3, HSK3_LESSONS) : [];
+  const allWordsPool = [...allHsk1, ...allHsk2, ...allHsk3].filter(w => w.char && w.pinyin);
 
   if (allWordsPool.length > 0) {
     const idx = dayOfYear() % allWordsPool.length;
@@ -448,14 +472,16 @@
 
   /* ---- تحديد وجهة تاب المراجعة (أنسب مستوى فيه كلمات مستحقة) ---- */
   const reviewTab = document.getElementById('tabReview');
-  if (hsk2Due > 0) {
+  if (hsk3Due > 0) {
+    reviewTab.href = 'review.html?level=3';
+  } else if (hsk2Due > 0) {
     reviewTab.href = 'review.html?level=2';
   } else if (hsk1Due > 0) {
     reviewTab.href = 'review.html?level=1';
   } else {
-    reviewTab.href = hsk2Words.length > 0 ? 'review.html?level=2' : 'review.html?level=1';
+    reviewTab.href = hsk3Words.length > 0 ? 'review.html?level=3' : (hsk2Words.length > 0 ? 'review.html?level=2' : 'review.html?level=1');
   }
-  if (hsk1Due + hsk2Due > 0) {
+  if (hsk1Due + hsk2Due + hsk3Due > 0) {
     document.getElementById('reviewDot').style.display = 'block';
   }
 

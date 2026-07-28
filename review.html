@@ -110,13 +110,20 @@
 
 <script src="hsk1-data.js"></script>
 <script src="hsk2-data.js"></script>
+<script src="hsk3-data.js"></script>
 <script src="progress.js"></script>
 <script>
   const params = new URLSearchParams(window.location.search);
   const level = parseInt(params.get('level') || '2', 10);
-  const levelLabel = level === 2 ? 'HSK2' : 'HSK1';
-  const LESSONS = (level === 2 && typeof HSK2_LESSONS !== 'undefined') ? HSK2_LESSONS : (typeof HSK1_LESSONS !== 'undefined' ? HSK1_LESSONS : []);
-  const hubPage = level === 2 ? 'hsk2-path.html' : 'hsk1.html';
+  const LEVEL_MAP = {
+    1: { data: typeof HSK1_LESSONS !== 'undefined' ? HSK1_LESSONS : [], label: 'HSK1', hub: 'hsk1.html' },
+    2: { data: typeof HSK2_LESSONS !== 'undefined' ? HSK2_LESSONS : [], label: 'HSK2', hub: 'hsk2-path.html' },
+    3: { data: typeof HSK3_LESSONS !== 'undefined' ? HSK3_LESSONS : [], label: 'HSK3', hub: 'hsk3-path.html' }
+  };
+  const levelInfo = LEVEL_MAP[level] || LEVEL_MAP[2];
+  const levelLabel = levelInfo.label;
+  const LESSONS = levelInfo.data;
+  const hubPage = levelInfo.hub;
 
   document.getElementById('backLink').href = hubPage;
   document.getElementById('levelLabel').textContent = `المراجعة اليومية — ${levelLabel}`;
