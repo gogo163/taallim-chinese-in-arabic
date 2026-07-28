@@ -195,16 +195,22 @@
 
 <script src="hsk1-data.js"></script>
 <script src="hsk2-data.js"></script>
+<script src="hsk3-data.js"></script>
 <script src="progress.js"></script>
 <script>
   /* ---- read level + lesson number from URL: lesson.html?level=1&l=3 ---- */
   const params = new URLSearchParams(window.location.search);
   const level = parseInt(params.get('level') || '1', 10);
   const lessonId = parseInt(params.get('l') || '1', 10);
-  const isHSK2 = (level === 2 && typeof HSK2_LESSONS !== 'undefined');
-  const LESSONS = isHSK2 ? HSK2_LESSONS : HSK1_LESSONS;
-  const levelLabel = level === 2 ? 'HSK2' : 'HSK1';
-  const hubPage = level === 2 ? 'hsk2-path.html' : 'hsk1.html';
+  const LEVEL_MAP = {
+    1: { data: typeof HSK1_LESSONS !== 'undefined' ? HSK1_LESSONS : [], label: 'HSK1', hub: 'hsk1.html' },
+    2: { data: typeof HSK2_LESSONS !== 'undefined' ? HSK2_LESSONS : [], label: 'HSK2', hub: 'hsk2-path.html' },
+    3: { data: typeof HSK3_LESSONS !== 'undefined' ? HSK3_LESSONS : [], label: 'HSK3', hub: 'hsk3-path.html' }
+  };
+  const levelInfo = LEVEL_MAP[level] || LEVEL_MAP[1];
+  const LESSONS = levelInfo.data;
+  const levelLabel = levelInfo.label;
+  const hubPage = levelInfo.hub;
   const lesson = LESSONS.find(l => l.id === lessonId);
   const total = LESSONS.length;
 
@@ -322,7 +328,7 @@
     if (lesson.quiz && lesson.quiz.length) {
       const box = document.createElement('div');
       box.className = 'quiz-box';
-      let html = `<div class="quiz-badge">✏️ اختبري نفسك في الدرس ده</div>`;
+      let html = `<div class="quiz-badge">✏️ اختبر نفسك في الدرس ده</div>`;
       lesson.quiz.forEach((q, qi) => {
         html += `
           <div class="quiz-q" data-qindex="${qi}" data-correct="${q.correctIndex}">
@@ -388,7 +394,7 @@
     if (lesson.id < total){ nextBtn.href = `lesson.html?level=${level}&l=${lesson.id+1}`; }
     else { nextBtn.textContent = 'خلصت المستوى! 🎉'; nextBtn.href = hubPage; }
 
-    /* ---- لو الدرس مفيهوش كويز (زي دروس HSK1 الحالية)، سجّلي الإكمال لما يضغطوا "التالي" ---- */
+    /* ---- لو الدرس مفيهوش كويز (زي دروس HSK1 الحالية)، سجّل الإكمال لما يضغطوا "التالي" ---- */
     if (!lesson.quiz || !lesson.quiz.length) {
       nextBtn.addEventListener('click', () => {
         TaallimProgress.completeLesson(levelLabel, lesson.id, null);
