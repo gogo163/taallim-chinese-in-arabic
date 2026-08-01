@@ -59,6 +59,7 @@
   .phrase-body{ flex:1; }
   .phrase-hanzi{ font-family:'Noto Serif SC',serif; font-size:1.3rem; margin-bottom:2px; }
   .phrase-pinyin{ color:var(--gold); font-size:0.82rem; font-weight:700; margin-bottom:4px; }
+  .phrase-pinyin-ar{ color:var(--text-dim); font-weight:500; }
   .phrase-meaning{ font-size:0.88rem; color:var(--paper); font-weight:600; }
 
   footer.note{ text-align:center; color:var(--text-dim); font-size:0.78rem; margin-top:20px; padding:0 30px; }
@@ -109,7 +110,7 @@
         <button class="phrase-sound" data-audio="${p.audio}" data-char="${p.hanzi}">🔊</button>
         <div class="phrase-body">
           <div class="phrase-hanzi zh">${p.hanzi}</div>
-          <div class="phrase-pinyin">${p.pinyin}</div>
+          <div class="phrase-pinyin">${p.pinyin}${p.pinyin_ar ? ` <span class="phrase-pinyin-ar">(${p.pinyin_ar})</span>` : ''}</div>
           <div class="phrase-meaning">${p.meaning_ar}</div>
         </div>
       `;

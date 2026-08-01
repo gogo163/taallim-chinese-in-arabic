@@ -156,13 +156,12 @@ function convertToken(rawToken) {
   }).join('');
 }
 
-// ---------- 5. الدالة الرئيسية: تحول جملة/كلمة pinyin كاملة (توكنز مفصولة بمسافة) ----------
+// ---------- 5. الدالة الرئيسية: تحول جملة/كلمة pinyin كاملة ----------
+// بتفصل علامات الترقيم (. , ... ? !) عن الكلمات تلقائيًا وتسيبها زي ما هي
+const PINYIN_WORD_RE = /[a-zA-Züāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]+/gi;
+
 function pinyinToArabic(pinyinText) {
-  return pinyinText
-    .split(/\s+/)
-    .filter(Boolean)
-    .map(convertToken)
-    .join(' ');
+  return pinyinText.replace(PINYIN_WORD_RE, match => convertToken(match));
 }
 
 // نسخة بترجع كمان أرقام النغمات (لو عايز تلوّن الحروف في الواجهة)
