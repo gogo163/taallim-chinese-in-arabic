@@ -49,6 +49,7 @@
   }
   .v-char{ font-family:'Noto Serif SC',serif; font-size:2rem; color:var(--paper); }
   .v-pinyin{ color:var(--gold); font-size:1.05rem; }
+  .v-pinyin-ar{ color:var(--text-dim); font-size:0.9rem; }
   .v-ar{ font-weight:700; color:var(--paper); margin-bottom:4px; }
   .v-example{ font-size:0.85rem; color:var(--text-dim); }
   .v-example .zh{ color:var(--jade); }
@@ -224,13 +225,14 @@
       return {
         char: w.hanzi,
         pinyin: w.pinyin,
+        pinyin_ar: w.pinyin_ar,
         ar: w.meaning_ar,
         ex_zh: w.example ? w.example.hanzi : '',
         ex_py: w.example ? w.example.pinyin : '',
         ex_ar: w.example ? w.example.meaning_ar : ''
       };
     }
-    return w; // شكل HSK1 الأصلي أصلًا
+    return w; // شكل HSK1 الأصلي أصلًا (فيه pinyin_ar لو موجود)
   }
 
   /* ---- عرض نقاط/ستريك الهيدر ---- */
@@ -268,7 +270,7 @@
       const audioPath = raw.audio ? raw.audio : `audio/hsk${level}/l${lesson.id}-${wordIndex}.wav`;
       item.innerHTML = `
         <div class="v-char zh">${w.char}</div>
-        <div class="v-pinyin">${w.pinyin}</div>
+        <div class="v-pinyin">${w.pinyin}${w.pinyin_ar ? ` <span class="v-pinyin-ar">(${w.pinyin_ar})</span>` : ''}</div>
         <div>
           <div class="v-ar">${w.ar}</div>
           <div class="v-example"><span class="zh">${w.ex_zh}</span> (${w.ex_py}) = ${w.ex_ar}</div>
@@ -377,7 +379,7 @@
 
         const resultBox = document.getElementById('quizResult');
         resultBox.style.display = 'block';
-        resultBox.textContent = `أجبتِ صح على ${correctCount} من ${total_q} — +${state.points - beforePts} نقطة`;
+        resultBox.textContent = `أجبت صح على ${correctCount} من ${total_q} — +${state.points - beforePts} نقطة`;
         document.getElementById('quizSubmit').disabled = true;
         showPointsToast(`🎉 الدرس اتحسب! +${state.points - beforePts} نقطة`);
       });
