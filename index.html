@@ -109,6 +109,26 @@
   .node-btn.pulse{ animation:pulse 2.2s infinite; }
   @keyframes pulse{ 0%{transform:scale(1);} 50%{transform:scale(1.06);} 100%{transform:scale(1);} }
 
+  .node-btn.level-locked{ filter:grayscale(70%); opacity:0.5; }
+  .path-node.level-locked-wrap{ cursor:not-allowed; }
+  .node-lock-icon{
+    position:absolute; top:-4px; right:-4px; background:var(--paper); color:var(--ink);
+    width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:0.7rem; border:2px solid var(--ink);
+  }
+  .level-toast{
+    display:none; position:fixed; bottom:76px; left:50%; transform:translateX(-50%);
+    z-index:999; background:var(--ink-2); border:1px solid rgba(150,110,40,0.25); border-radius:16px;
+    padding:14px 16px; box-shadow:0 10px 30px rgba(0,0,0,0.2); max-width:320px; width:88%;
+    text-align:center; font-family:'Tajawal',sans-serif;
+  }
+  .level-toast.show{ display:block; }
+  .level-toast p{ font-size:0.85rem; font-weight:800; color:var(--paper); margin-bottom:10px; line-height:1.7; }
+  .level-toast button{
+    padding:8px 18px; border-radius:10px; border:none; background:var(--seal); color:var(--ink);
+    font-weight:800; font-size:0.8rem; cursor:pointer; font-family:'Tajawal',sans-serif;
+  }
+
   /* ================= كارت كلمة اليوم ================= */
   .word-of-day{
     margin:16px 20px 0; background:linear-gradient(135deg, rgba(178,58,46,0.06), rgba(168,121,43,0.08));
@@ -251,8 +271,8 @@
         </a>
       </div>
 
-      <div class="path-node">
-        <a href="hsk2-path.html" style="text-align:center;">
+      <div class="path-node" id="hsk2NodeWrap">
+        <a href="hsk2-path.html" id="hsk2Node" style="text-align:center;">
           <div class="node-btn hsk2">
             <div class="node-icon">进</div>
             <div class="node-badge" id="hsk2Badge">0/10</div>
@@ -261,8 +281,8 @@
         </a>
       </div>
 
-      <div class="path-node">
-        <a href="hsk3-path.html" style="text-align:center;">
+      <div class="path-node" id="hsk3NodeWrap">
+        <a href="hsk3-path.html" id="hsk3Node" style="text-align:center;">
           <div class="node-btn hsk3">
             <div class="node-icon">升</div>
             <div class="node-badge" id="hsk3Badge">0/10</div>
@@ -289,6 +309,11 @@
   </div>
 
   <footer class="note">تعلّم 中文 — صُنع بشغف من مصر</footer>
+</div>
+
+<div class="level-toast" id="levelToast">
+  <p id="levelToastMsg"></p>
+  <button onclick="document.getElementById('levelToast').classList.remove('show')">تمام</button>
 </div>
 
 <!-- ============ Profile View ============ -->
@@ -352,6 +377,35 @@
   document.getElementById('hsk1Badge').textContent = `${hsk1Done}/10`;
   document.getElementById('hsk2Badge').textContent = `${hsk2Done}/10`;
   document.getElementById('hsk3Badge').textContent = `${hsk3Done}/10`;
+
+  /* ---- قفل المستويات بالتسلسل: HSK1 → HSK2 → HSK3 ---- */
+  function lockLevelNode(nodeId, wrapId, requiredLevel, requiredTotal, message) {
+    const node = document.getElementById(nodeId);
+    const wrap = document.getElementById(wrapId);
+    const btn = node.querySelector('.node-btn');
+    btn.classList.add('level-locked');
+    wrap.classList.add('level-locked-wrap');
+    if (!btn.querySelector('.node-lock-icon')) {
+      const lock = document.createElement('div');
+      lock.className = 'node-lock-icon';
+      lock.textContent = '🔒';
+      btn.appendChild(lock);
+    }
+    node.setAttribute('href', '#');
+    node.onclick = (e) => {
+      e.preventDefault();
+      document.getElementById('levelToastMsg').textContent = message;
+      document.getElementById('levelToast').classList.add('show');
+      return false;
+    };
+  }
+
+  if (hsk1Done < 10) {
+    lockLevelNode('hsk2Node', 'hsk2NodeWrap', 'HSK1', 10, '🔒 لازم تخلّص مستوى HSK1 كامل (10/10) الأول');
+  }
+  if (hsk2Done < 10) {
+    lockLevelNode('hsk3Node', 'hsk3NodeWrap', 'HSK2', 10, '🔒 لازم تخلّص مستوى HSK2 كامل (10/10) الأول');
+  }
 
   /* ---- تحديد أنسب نقطة استمرار ---- */
   let continueHref, continueIcon, continueTitle, continueSub;
