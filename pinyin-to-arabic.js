@@ -5,8 +5,9 @@
  * ⚠️ مهم جدًا: الصينية لغة نغمية (tones) — نفس المقطع بنغمة مختلفة = معنى مختلف تمامًا.
  * الكتابة العربية هنا (زي الصور اللي بعتها) بتفقد النغمة تمامًا.
  * لذلك: استخدم الناتج ده كـ "مساعدة نطق إضافية" جنب الـ pinyin الأصلي، مش بديل عنه.
- * لو حابب تحافظ على النغمة، استخدم دالة pinyinToArabicWithTone اللي بترجع رقم النغمة كمان
- * عشان تلوّن الحرف في الواجهة (1 أحمر / 2 أخضر / 3 أزرق / 4 بنفسجي مثلاً).
+ *
+ * تحديث: أضفنا رموز النغمات (ˉ ˊ ˇ ˋ) بعد كل مقطع عربي عشان نحافظ على معلومة
+ * النغمة حتى في النسخة العربية. استخدم pinyinToArabicWithTones للنسخة دي.
  */
 
 // ---------- 1. جدول شيل النغمات (tone marks) وإرجاع الحرف الأساسي + رقم النغمة ----------
@@ -18,6 +19,10 @@ const TONE_MAP = {
   'ū':['u',1],'ú':['u',2],'ǔ':['u',3],'ù':['u',4],
   'ǖ':['ü',1],'ǘ':['ü',2],'ǚ':['ü',3],'ǜ':['ü',4],
 };
+
+// رموز النغمات المستخدمة في النسخة العربية (توضع بعد المقطع العربي مباشرة)
+// النغمة 1: ˉ (مستوية) | 2: ˊ (صاعدة) | 3: ˇ (هابطة-صاعدة) | 4: ˋ (هابطة) | 0/محايدة: بدون رمز
+const TONE_MARKS = { 1: 'ˉ', 2: 'ˊ', 3: 'ˇ', 4: 'ˋ', 0: '' };
 
 function stripTone(syllable) {
   let tone = 0;
@@ -156,12 +161,42 @@ function convertToken(rawToken) {
   }).join('');
 }
 
+// ---------- 4.6 نفس فك التقطيع بس بيرجّع رمز النغمة بعد كل مقطع عربي ----------
+function convertTokenWithTones(rawToken) {
+  const parts = rawToken.split(/['-]/).filter(Boolean);
+  return parts.map(part => {
+    const { plain } = stripTone(part);
+    if (isValidSyllable(plain) || SPECIAL_SYLLABLES[plain]) {
+      const { arabic, tone } = convertSyllable(part);
+      return arabic + TONE_MARKS[tone];
+    }
+    const originalChars = [...part];
+    const segments = segmentSyllables(plain);
+    if (segments) {
+      let idx = 0;
+      return segments.map(seg => {
+        const origSub = originalChars.slice(idx, idx + seg.length).join('');
+        idx += seg.length;
+        const { arabic, tone } = convertSyllable(origSub);
+        return arabic + TONE_MARKS[tone];
+      }).join('');
+    }
+    const { arabic, tone } = convertSyllable(part);
+    return arabic + TONE_MARKS[tone];
+  }).join('');
+}
+
 // ---------- 5. الدالة الرئيسية: تحول جملة/كلمة pinyin كاملة ----------
 // بتفصل علامات الترقيم (. , ... ? !) عن الكلمات تلقائيًا وتسيبها زي ما هي
 const PINYIN_WORD_RE = /[a-zA-Züāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]+/gi;
 
 function pinyinToArabic(pinyinText) {
   return pinyinText.replace(PINYIN_WORD_RE, match => convertToken(match));
+}
+
+// نسخة الجملة الكاملة اللي بتحافظ على رموز النغمات بعد كل مقطع
+function pinyinToArabicWithTones(pinyinText) {
+  return pinyinText.replace(PINYIN_WORD_RE, match => convertTokenWithTones(match));
 }
 
 // نسخة بترجع كمان أرقام النغمات (لو عايز تلوّن الحروف في الواجهة)
@@ -173,29 +208,23 @@ function pinyinToArabicWithTone(pinyinText) {
     .map(tok => ({ arabic: convertToken(tok), tone: stripTone(tok.split(/['-]/)[0]).tone }));
 }
 
-module.exports = { pinyinToArabic, pinyinToArabicWithTone };
+module.exports = {
+  pinyinToArabic,
+  pinyinToArabicWithTone,
+  pinyinToArabicWithTones,
+};
 
-// ---------- 6. اختبار سريع على نفس أمثلة الصور بتاعتك ----------
+// ---------- 6. اختبار سريع ----------
 if (require.main === module) {
   const tests = [
     ['nǐ hǎo', 'ني هاو (الأصل)'],
     ['zǎo shang hǎo', 'زاو شانغ هاو (الأصل)'],
-    ['wǎn shàng hǎo', 'وان شانغ هاو (الأصل)'],
-    ['wǎn ān', 'وان آن (الأصل)'],
-    ['zài jiàn', 'تساي جيان (الأصل)'],
-    ['qǐng', 'تشينغ (الأصل)'],
-    ['xiè xie', 'شيه شيه (الأصل)'],
-    ['bù kè qi', 'بو كه تشي (الأصل)'],
+    ['xièxie', 'شيهشيه (الأصل)'],
     ['nǐ hǎo ma', 'ني هاو ما (الأصل)'],
-    ['wǒ hěn hǎo', 'وو هن هاو (الأصل)'],
-    ['piào liang', 'بياوليانغ (الأصل)'],
-    ['gāo xìng', 'غاو شينغ (الأصل)'],
-    ['shāng xīn', 'شانغ شين (الأصل)'],
-    ['róng yì', 'رونغ يي (الأصل)'],
   ];
 
-  console.log('Pinyin -> Arabic (ناتج السكريبت) | (الأصل من الصورة)\n');
+  console.log('Pinyin -> Arabic بالنغمات (ناتج السكريبت) | (الأصل بدون نغمة)\n');
   for (const [py, original] of tests) {
-    console.log(`${py.padEnd(18)} -> ${pinyinToArabic(py).padEnd(15)} | ${original}`);
+    console.log(`${py.padEnd(18)} -> ${pinyinToArabicWithTones(py).padEnd(20)} | ${original}`);
   }
 }
