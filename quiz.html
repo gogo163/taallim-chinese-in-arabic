@@ -199,6 +199,7 @@
 <script src="hsk1-data.js"></script>
 <script src="hsk2-data.js"></script>
 <script src="hsk3-data.js"></script>
+<script src="hsk4-data.js"></script>
 <script src="progress.js"></script>
 
 <script>
@@ -218,7 +219,8 @@ const LEVEL_NUM = parseInt(new URLSearchParams(location.search).get('level'), 10
 const LEVEL_LABEL = 'HSK' + LEVEL_NUM;
 const LEVEL_LESSONS = { 1: (typeof HSK1_LESSONS !== 'undefined' ? HSK1_LESSONS : []),
                          2: (typeof HSK2_LESSONS !== 'undefined' ? HSK2_LESSONS : []),
-                         3: (typeof HSK3_LESSONS !== 'undefined' ? HSK3_LESSONS : []) }[LEVEL_NUM] || [];
+                         3: (typeof HSK3_LESSONS !== 'undefined' ? HSK3_LESSONS : []),
+                         4: (typeof HSK4_LESSONS !== 'undefined' ? HSK4_LESSONS : []) }[LEVEL_NUM] || [];
 
 let questions = [];
 let currentIndex = 0;

@@ -18,13 +18,12 @@
   body{
     background:var(--ink); color:var(--paper); font-family:'Tajawal',sans-serif;
     max-width:480px; margin:0 auto; min-height:100vh; position:relative;
-    padding-bottom:88px; /* عشان شريط التنقل السفلي */
+    padding-bottom:88px;
   }
   a{ text-decoration:none; color:inherit; }
   h1,h2{ font-family:'Amiri',serif; }
   .zh{ font-family:'Noto Serif SC',serif; }
 
-  /* ================= HUD العلوي ================= */
   .hud{
     position:sticky; top:0; z-index:30; background:rgba(251,246,234,0.96); backdrop-filter:blur(10px);
     padding:14px 18px; display:flex; align-items:center; justify-content:space-between;
@@ -40,13 +39,11 @@
   .chip.streak{ color:var(--seal); border-color:rgba(178,58,46,0.3); }
   .chip.points{ color:var(--gold); border-color:rgba(168,121,43,0.3); }
 
-  /* ================= الترحيب ================= */
   .greet{ padding:24px 20px 6px; }
   .greet .eyebrow{ color:var(--gold); font-size:0.78rem; font-weight:800; letter-spacing:1px; margin-bottom:6px; }
   .greet h1{ font-size:1.5rem; }
   .greet p{ color:var(--text-soft); font-size:0.85rem; margin-top:6px; }
 
-  /* ================= شريط "استمر من هنا" ================= */
   .continue-card{
     margin:16px 20px; background:var(--ink-2); border:1px solid rgba(150,110,40,0.25);
     border-radius:20px; padding:16px 18px; display:flex; align-items:center; gap:14px;
@@ -65,7 +62,6 @@
     padding:9px 16px; border-radius:999px; white-space:nowrap;
   }
 
-  /* ================= المسار الرئيسي ================= */
   .path-section{ padding:20px 0 10px; position:relative; }
   .path-title{ text-align:center; font-size:0.95rem; font-weight:800; color:var(--text-soft); margin-bottom:26px; }
 
@@ -84,6 +80,7 @@
   .path-node:nth-child(6){ justify-content:flex-start; padding-right:16%; }
   .path-node:nth-child(7){ justify-content:flex-end; padding-left:16%; }
   .path-node:nth-child(8){ justify-content:flex-start; padding-right:16%; }
+  .path-node:nth-child(9){ justify-content:flex-end; padding-left:16%; }
 
   .node-btn{
     width:82px; height:82px; border-radius:50%; display:flex; align-items:center; justify-content:center;
@@ -105,6 +102,7 @@
   .node-btn.hsk1{ background:var(--seal); }
   .node-btn.hsk2{ background:var(--seal-dark); }
   .node-btn.hsk3{ background:#8B5E34; }
+  .node-btn.hsk4{ background:#4A5D8C; }
   .node-btn.writing{ background:#6B4E9E; }
   .node-btn.travel{ background:#2F6F5E; }
   .node-btn.quiz{ background:var(--quiz); }
@@ -112,7 +110,26 @@
   .node-btn.pulse{ animation:pulse 2.2s infinite; }
   @keyframes pulse{ 0%{transform:scale(1);} 50%{transform:scale(1.06);} 100%{transform:scale(1);} }
 
-  /* ================= كارت كلمة اليوم ================= */
+  .node-btn.level-locked{ filter:grayscale(70%); opacity:0.5; }
+  .path-node.level-locked-wrap{ cursor:not-allowed; }
+  .node-lock-icon{
+    position:absolute; top:-4px; right:-4px; background:var(--paper); color:var(--ink);
+    width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:0.7rem; border:2px solid var(--ink);
+  }
+  .level-toast{
+    display:none; position:fixed; bottom:76px; left:50%; transform:translateX(-50%);
+    z-index:999; background:var(--ink-2); border:1px solid rgba(150,110,40,0.25); border-radius:16px;
+    padding:14px 16px; box-shadow:0 10px 30px rgba(0,0,0,0.2); max-width:320px; width:88%;
+    text-align:center; font-family:'Tajawal',sans-serif;
+  }
+  .level-toast.show{ display:block; }
+  .level-toast p{ font-size:0.85rem; font-weight:800; color:var(--paper); margin-bottom:10px; line-height:1.7; }
+  .level-toast button{
+    padding:8px 18px; border-radius:10px; border:none; background:var(--seal); color:var(--ink);
+    font-weight:800; font-size:0.8rem; cursor:pointer; font-family:'Tajawal',sans-serif;
+  }
+
   .word-of-day{
     margin:16px 20px 0; background:linear-gradient(135deg, rgba(178,58,46,0.06), rgba(168,121,43,0.08));
     border:1px solid rgba(178,58,46,0.2); border-radius:20px; padding:20px 18px;
@@ -144,7 +161,6 @@
 
   footer.note{ text-align:center; color:var(--text-dim); font-size:0.78rem; margin-top:30px; padding:0 30px; }
 
-  /* ================= صفحة البروفايل (تظهر/تختفي) ================= */
   .profile-view{ display:none; padding:24px 20px; }
   .profile-view.active{ display:block; }
   .home-view.hidden{ display:none; }
@@ -176,7 +192,6 @@
   }
   .culture-streak-box b{ color:var(--seal); }
 
-  /* ================= شريط التنقل السفلي ================= */
   .bottom-nav{
     position:fixed; bottom:0; left:50%; transform:translateX(-50%); width:100%; max-width:480px;
     background:rgba(251,246,234,0.97); backdrop-filter:blur(10px);
@@ -206,7 +221,6 @@
   </div>
 </header>
 
-<!-- ============ Home View ============ -->
 <div class="home-view" id="homeView">
 
   <div class="greet">
@@ -254,8 +268,8 @@
         </a>
       </div>
 
-      <div class="path-node">
-        <a href="hsk2-path.html" style="text-align:center;">
+      <div class="path-node" id="hsk2NodeWrap">
+        <a href="hsk2-path.html" id="hsk2Node" style="text-align:center;">
           <div class="node-btn hsk2">
             <div class="node-icon">进</div>
             <div class="node-badge" id="hsk2Badge">0/10</div>
@@ -264,13 +278,23 @@
         </a>
       </div>
 
-      <div class="path-node">
-        <a href="hsk3-path.html" style="text-align:center;">
+      <div class="path-node" id="hsk3NodeWrap">
+        <a href="hsk3-path.html" id="hsk3Node" style="text-align:center;">
           <div class="node-btn hsk3">
             <div class="node-icon">升</div>
             <div class="node-badge" id="hsk3Badge">0/10</div>
           </div>
           <div class="node-label">مستوى HSK3</div>
+        </a>
+      </div>
+
+      <div class="path-node" id="hsk4NodeWrap">
+        <a href="hsk4-path.html" id="hsk4Node" style="text-align:center;">
+          <div class="node-btn hsk4">
+            <div class="node-icon">越</div>
+            <div class="node-badge" id="hsk4Badge">0/10</div>
+          </div>
+          <div class="node-label">مستوى HSK4</div>
         </a>
       </div>
 
@@ -301,7 +325,11 @@
   <footer class="note">تعلّم 中文 — صُنع بشغف من مصر</footer>
 </div>
 
-<!-- ============ Profile View ============ -->
+<div class="level-toast" id="levelToast">
+  <p id="levelToastMsg"></p>
+  <button onclick="document.getElementById('levelToast').classList.remove('show')">تمام</button>
+</div>
+
 <div class="profile-view" id="profileView">
   <div class="profile-hero">
     <div class="profile-avatar zh">学</div>
@@ -332,7 +360,6 @@
   </div>
 </div>
 
-<!-- ============ Bottom Nav ============ -->
 <nav class="bottom-nav">
   <button class="nav-tab active" id="tabHome">
     <span class="ic">🏠</span> الرئيسية
@@ -349,6 +376,7 @@
 <script src="hsk1-data.js"></script>
 <script src="hsk2-data.js"></script>
 <script src="hsk3-data.js"></script>
+<script src="hsk4-data.js"></script>
 <script src="progress.js"></script>
 <script>
   const state = TaallimProgress.loadProgress();
@@ -359,13 +387,50 @@
   const hsk1Done = state.lastCompletedByLevel['HSK1'] || 0;
   const hsk2Done = state.lastCompletedByLevel['HSK2'] || 0;
   const hsk3Done = state.lastCompletedByLevel['HSK3'] || 0;
+  const hsk4Done = state.lastCompletedByLevel['HSK4'] || 0;
   document.getElementById('hsk1Badge').textContent = `${hsk1Done}/10`;
   document.getElementById('hsk2Badge').textContent = `${hsk2Done}/10`;
   document.getElementById('hsk3Badge').textContent = `${hsk3Done}/10`;
+  document.getElementById('hsk4Badge').textContent = `${hsk4Done}/10`;
+
+  /* ---- قفل المستويات بالتسلسل: HSK1 → HSK2 → HSK3 → HSK4 ---- */
+  function lockLevelNode(nodeId, wrapId, requiredLevel, requiredTotal, message) {
+    const node = document.getElementById(nodeId);
+    const wrap = document.getElementById(wrapId);
+    const btn = node.querySelector('.node-btn');
+    btn.classList.add('level-locked');
+    wrap.classList.add('level-locked-wrap');
+    if (!btn.querySelector('.node-lock-icon')) {
+      const lock = document.createElement('div');
+      lock.className = 'node-lock-icon';
+      lock.textContent = '🔒';
+      btn.appendChild(lock);
+    }
+    node.setAttribute('href', '#');
+    node.onclick = (e) => {
+      e.preventDefault();
+      document.getElementById('levelToastMsg').textContent = message;
+      document.getElementById('levelToast').classList.add('show');
+      return false;
+    };
+  }
+
+  if (hsk1Done < 10) {
+    lockLevelNode('hsk2Node', 'hsk2NodeWrap', 'HSK1', 10, '🔒 لازم تخلّص مستوى HSK1 كامل (10/10) الأول');
+  }
+  if (hsk2Done < 10) {
+    lockLevelNode('hsk3Node', 'hsk3NodeWrap', 'HSK2', 10, '🔒 لازم تخلّص مستوى HSK2 كامل (10/10) الأول');
+  }
+  if (hsk3Done < 10) {
+    lockLevelNode('hsk4Node', 'hsk4NodeWrap', 'HSK3', 10, '🔒 لازم تخلّص مستوى HSK3 كامل (10/10) الأول');
+  }
 
   /* ---- تحديد أنسب نقطة استمرار ---- */
   let continueHref, continueIcon, continueTitle, continueSub;
-  if (hsk3Done > 0 && hsk3Done < 10) {
+  if (hsk4Done > 0 && hsk4Done < 10) {
+    continueHref = `lesson.html?level=4&l=${hsk4Done + 1}`;
+    continueIcon = '越'; continueTitle = `استمر من HSK4 — درس ${hsk4Done + 1}`; continueSub = 'مستوى HSK4';
+  } else if (hsk3Done > 0 && hsk3Done < 10) {
     continueHref = `lesson.html?level=3&l=${hsk3Done + 1}`;
     continueIcon = '升'; continueTitle = `استمر من HSK3 — درس ${hsk3Done + 1}`; continueSub = 'مستوى HSK3';
   } else if (hsk2Done > 0 && hsk2Done < 10) {
@@ -374,13 +439,16 @@
   } else if (hsk1Done > 0 && hsk1Done < 10) {
     continueHref = `lesson.html?level=1&l=${hsk1Done + 1}`;
     continueIcon = '路'; continueTitle = `استمر من HSK1 — درس ${hsk1Done + 1}`; continueSub = 'مستوى HSK1';
+  } else if (hsk3Done >= 10 && hsk4Done === 0) {
+    continueHref = `hsk4-path.html`;
+    continueIcon = '越'; continueTitle = 'جاهز لمستوى HSK4؟'; continueSub = 'خلصت HSK3 كامل';
   } else if (hsk2Done >= 10 && hsk3Done === 0) {
     continueHref = `hsk3-path.html`;
     continueIcon = '升'; continueTitle = 'جاهز لمستوى HSK3؟'; continueSub = 'خلصت HSK2 كامل';
   } else if (hsk1Done >= 10 && hsk2Done === 0) {
     continueHref = `hsk2-path.html`;
     continueIcon = '进'; continueTitle = 'جاهز لمستوى HSK2؟'; continueSub = 'خلصت HSK1 كامل';
-  } else if (hsk1Done >= 10 && hsk2Done >= 10 && hsk3Done >= 10) {
+  } else if (hsk1Done >= 10 && hsk2Done >= 10 && hsk3Done >= 10 && hsk4Done >= 10) {
     continueHref = `writing.html`;
     continueIcon = '写'; continueTitle = 'خلصت كل المستويات! 🎉'; continueSub = 'جرب تدريب الكتابة';
   } else {
@@ -392,7 +460,7 @@
   document.getElementById('continueSub').textContent = continueSub;
   document.getElementById('continueBtn').href = continueHref;
 
-  if (state.streak.current === 0 && hsk1Done === 0 && hsk2Done === 0 && hsk3Done === 0) {
+  if (state.streak.current === 0 && hsk1Done === 0 && hsk2Done === 0 && hsk3Done === 0 && hsk4Done === 0) {
     document.getElementById('greetTitle').textContent = 'ابدأ رحلتك في تعلّم الصيني';
   }
 
@@ -439,6 +507,8 @@
   const hsk1Words = (typeof HSK1_LESSONS !== 'undefined') ? wordsForLevel('HSK1', HSK1_LESSONS) : [];
   const hsk2Words = (typeof HSK2_LESSONS !== 'undefined') ? wordsForLevel('HSK2', HSK2_LESSONS) : [];
   const hsk3Words = (typeof HSK3_LESSONS !== 'undefined') ? wordsForLevel('HSK3', HSK3_LESSONS) : [];
+  const hsk4Words = (typeof HSK4_LESSONS !== 'undefined') ? wordsForLevel('HSK4', HSK4_LESSONS) : [];
+  const hsk4Due = TaallimProgress.getDueWords(hsk4Words).length;
   const hsk3Due = TaallimProgress.getDueWords(hsk3Words).length;
   const hsk2Due = TaallimProgress.getDueWords(hsk2Words).length;
   const hsk1Due = TaallimProgress.getDueWords(hsk1Words).length;
@@ -449,7 +519,7 @@
     for (const ch of pinyin) {
       for (const t in tones) { if (tones[t].includes(ch)) return parseInt(t, 10); }
     }
-    return 5; // نغمة خفيفة / محايدة
+    return 5;
   }
   const TONE_COLORS = { 1:'#B23A2E', 2:'#A8792B', 3:'#2F4F47', 4:'#6B4E9E', 5:'#8a8270' };
   const TONE_NAMES = { 1:'النغمة الأولى', 2:'النغمة التانية', 3:'النغمة التالتة', 4:'النغمة الرابعة', 5:'نغمة خفيفة' };
@@ -462,7 +532,8 @@
   const allHsk1 = (typeof HSK1_LESSONS !== 'undefined') ? allWordsInLevel(1, HSK1_LESSONS) : [];
   const allHsk2 = (typeof HSK2_LESSONS !== 'undefined') ? allWordsInLevel(2, HSK2_LESSONS) : [];
   const allHsk3 = (typeof HSK3_LESSONS !== 'undefined') ? allWordsInLevel(3, HSK3_LESSONS) : [];
-  const allWordsPool = [...allHsk1, ...allHsk2, ...allHsk3].filter(w => w.char && w.pinyin);
+  const allHsk4 = (typeof HSK4_LESSONS !== 'undefined') ? allWordsInLevel(4, HSK4_LESSONS) : [];
+  const allWordsPool = [...allHsk1, ...allHsk2, ...allHsk3, ...allHsk4].filter(w => w.char && w.pinyin);
 
   if (allWordsPool.length > 0) {
     const idx = dayOfYear() % allWordsPool.length;
@@ -491,16 +562,18 @@
 
   /* ---- تحديد وجهة تاب المراجعة (أنسب مستوى فيه كلمات مستحقة) ---- */
   const reviewTab = document.getElementById('tabReview');
-  if (hsk3Due > 0) {
+  if (hsk4Due > 0) {
+    reviewTab.href = 'review.html?level=4';
+  } else if (hsk3Due > 0) {
     reviewTab.href = 'review.html?level=3';
   } else if (hsk2Due > 0) {
     reviewTab.href = 'review.html?level=2';
   } else if (hsk1Due > 0) {
     reviewTab.href = 'review.html?level=1';
   } else {
-    reviewTab.href = hsk3Words.length > 0 ? 'review.html?level=3' : (hsk2Words.length > 0 ? 'review.html?level=2' : 'review.html?level=1');
+    reviewTab.href = hsk4Words.length > 0 ? 'review.html?level=4' : (hsk3Words.length > 0 ? 'review.html?level=3' : (hsk2Words.length > 0 ? 'review.html?level=2' : 'review.html?level=1'));
   }
-  if (hsk1Due + hsk2Due + hsk3Due > 0) {
+  if (hsk1Due + hsk2Due + hsk3Due + hsk4Due > 0) {
     document.getElementById('reviewDot').style.display = 'block';
   }
 
