@@ -197,6 +197,7 @@
 <script src="hsk1-data.js"></script>
 <script src="hsk2-data.js"></script>
 <script src="hsk3-data.js"></script>
+<script src="hsk4-data.js"></script>
 <script src="progress.js"></script>
 <script>
   /* ---- read level + lesson number from URL: lesson.html?level=1&l=3 ---- */
@@ -206,7 +207,8 @@
   const LEVEL_MAP = {
     1: { data: typeof HSK1_LESSONS !== 'undefined' ? HSK1_LESSONS : [], label: 'HSK1', hub: 'hsk1.html' },
     2: { data: typeof HSK2_LESSONS !== 'undefined' ? HSK2_LESSONS : [], label: 'HSK2', hub: 'hsk2-path.html' },
-    3: { data: typeof HSK3_LESSONS !== 'undefined' ? HSK3_LESSONS : [], label: 'HSK3', hub: 'hsk3-path.html' }
+    3: { data: typeof HSK3_LESSONS !== 'undefined' ? HSK3_LESSONS : [], label: 'HSK3', hub: 'hsk3-path.html' },
+    4: { data: typeof HSK4_LESSONS !== 'undefined' ? HSK4_LESSONS : [], label: 'HSK4', hub: 'hsk4-path.html' }
   };
   const levelInfo = LEVEL_MAP[level] || LEVEL_MAP[1];
   const LESSONS = levelInfo.data;
