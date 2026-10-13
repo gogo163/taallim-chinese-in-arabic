@@ -11,7 +11,6 @@
     --ink:#FBF6EA; --ink-2:#FFFFFF; --paper:#241F16;
     --seal:#B23A2E; --seal-dark:#8C2C22; --gold:#A8792B; --gold-light:#D9B774; --jade:#2F4F47;
     --text-soft:#5C5240; --text-dim:#7A7260; --locked:#C9C0AC;
-    --quiz:#8B3A5C;
   }
   *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
   html{ overflow-x:hidden; }
@@ -82,6 +81,10 @@
   .path-node:nth-child(8){ justify-content:flex-start; padding-right:16%; }
   .path-node:nth-child(9){ justify-content:flex-end; padding-left:16%; }
 
+  /* عقدة تجربة النطق: مخفية لحد ما كودولار يفعّلها (النسخ القديمة من التطبيق مش هتشوفها) */
+  .path-node.speak-wrap{ display:none; }
+  .path-node.speak-wrap.show{ display:flex; }
+
   .node-btn{
     width:82px; height:82px; border-radius:50%; display:flex; align-items:center; justify-content:center;
     position:relative; border:none; box-shadow:0 8px 18px rgba(36,31,22,0.18);
@@ -105,7 +108,7 @@
   .node-btn.hsk4{ background:#4A5D8C; }
   .node-btn.writing{ background:#6B4E9E; }
   .node-btn.travel{ background:#2F6F5E; }
-  .node-btn.quiz{ background:var(--quiz); }
+  .node-btn.speak{ background:#C4663A; }
 
   .node-btn.pulse{ animation:pulse 2.2s infinite; }
   @keyframes pulse{ 0%{transform:scale(1);} 50%{transform:scale(1.06);} 100%{transform:scale(1);} }
@@ -312,10 +315,10 @@
         </a>
       </div>
 
-      <div class="path-node">
-        <a href="quiz-select.html" style="text-align:center;">
-          <div class="node-btn quiz"><div class="node-icon">测</div></div>
-          <div class="node-label">اختبار الوقت ⏱️</div>
+      <div class="path-node speak-wrap" id="speakNodeWrap">
+        <a href="pronounce.html" style="text-align:center;">
+          <div class="node-btn speak"><div class="node-icon">说</div></div>
+          <div class="node-label">تجربة النطق</div>
         </a>
       </div>
 
@@ -392,6 +395,19 @@
   document.getElementById('hsk2Badge').textContent = `${hsk2Done}/10`;
   document.getElementById('hsk3Badge').textContent = `${hsk3Done}/10`;
   document.getElementById('hsk4Badge').textContent = `${hsk4Done}/10`;
+
+  /* ---- تفعيل عقدة تجربة النطق (كودولار بينادي enableSpeech بعد تحميل الصفحة) ---- */
+  function showSpeechNode(){
+    const el = document.getElementById('speakNodeWrap');
+    if (el) el.classList.add('show');
+  }
+  window.enableSpeech = function(){
+    try { localStorage.setItem('speech_ok', '1'); } catch(e) {}
+    showSpeechNode();
+  };
+  try { if (localStorage.getItem('speech_ok') === '1') showSpeechNode(); } catch(e) {}
+  // للتجربة بس: افتح index.html?speech=1 عشان تشوف العقدة من المتصفح
+  if (new URLSearchParams(location.search).get('speech') === '1') showSpeechNode();
 
   /* ---- قفل المستويات بالتسلسل: HSK1 → HSK2 → HSK3 → HSK4 ---- */
   function lockLevelNode(nodeId, wrapId, requiredLevel, requiredTotal, message) {
