@@ -104,24 +104,34 @@ const FALLBACK_WORDS = [
 
 function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
 
+// بيدعم صيغتين للداتا: {hanzi, meaning_ar} (HSK3/4) و {char, ar} (HSK1/2)
+function normWord(w, lessonId, i){
+  const hanzi = w.hanzi !== undefined ? w.hanzi : w.char;
+  if(!hanzi) return null;
+  return {
+    hanzi: hanzi,
+    pinyin: w.pinyin || "",
+    pinyin_ar: w.pinyin_ar || "",
+    meaning_ar: w.meaning_ar !== undefined ? w.meaning_ar : (w.ar || ""),
+    audio: w.audio ? w.audio : `audio/hsk1/l${lessonId}-${i+1}.wav`
+  };
+}
+
 function buildPool(){
   if(typeof HSK1_LESSONS === 'undefined') return FALLBACK_WORDS.slice();
   let st = null;
   try{ st = TaallimProgress.loadProgress(); }catch(e){}
   const done = new Set((st && st.completedLessons || []).filter(k => k.startsWith('HSK1-')).map(k => parseInt(k.split('-')[1],10)));
-  let pool = [];
+  let pool = [], all = [];
   HSK1_LESSONS.forEach(lesson => {
-    if(done.size && !done.has(lesson.id)) return;
-    lesson.words.forEach((w, i) => {
-      if(!w.hanzi) return;
-      pool.push(Object.assign({}, w, { audio: w.audio ? w.audio : `audio/hsk1/l${lesson.id}-${i+1}.wav` }));
+    (lesson.words || []).forEach((w, i) => {
+      const n = normWord(w, lesson.id, i);
+      if(!n) return;
+      all.push(n);
+      if(done.has(lesson.id)) pool.push(n);   // الدروس اللي خلصها اليوزر
     });
   });
-  if(!pool.length){ // ما خلصتش أي درس: ناخد كل كلمات HSK1
-    HSK1_LESSONS.forEach(lesson => lesson.words.forEach((w, i) => {
-      if(w.hanzi) pool.push(Object.assign({}, w, { audio: w.audio ? w.audio : `audio/hsk1/l${lesson.id}-${i+1}.wav` }));
-    }));
-  }
+  if(!pool.length) pool = all;                // لو ما خلصش أي درس: كل كلمات HSK1
   return pool.length ? pool : FALLBACK_WORDS.slice();
 }
 
